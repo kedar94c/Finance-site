@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Smart Way to Set Financial Goals That Actually Work</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+  <style>
+    body { max-width: 770px; margin: auto; padding: 2rem 1rem; font-size: 1.12rem; background: #fafcff; }
+    h1, h2, h3 { color: #2d4e69; }
+    .chart-container { background: #fff; border: 1px solid #e3e4e6; border-radius: 8px; margin: 2rem 0; padding: 1.5rem; }
+    .tip { background: #e6f7e6; color: #155724; border-left: 4px solid #198754; padding: .75rem 1rem; margin: 1.5rem 0; }
+    .blockquote { font-size:1.15rem; margin:1.7rem 0 .7rem 0; color:#497796; }
+  </style>
+</head>
+<body>
+  <header class="mb-4 mt-2 text-center">
+    <h1 class="mb-3">The Smart Way to Set Financial Goals That Actually Work</h1>
+    <p class="text-muted"><i>Published: Sunday, July 20, 2025</i></p>
+  </header>
+
+  <section>
+    <p>Setting financial goals is the foundation of any successful financial plan, yet most studies show fewer than 10% of people achieve their ambitious goals. The key difference between dreamers and achievers lies in how they structure and track objectives using the SMART framework.</p>
+  </section>
+
+  <section>
+    <h2>Understanding SMART Goals</h2>
+    <ul>
+      <li><strong>Specific:</strong> Define exact targets. Instead of “save money,” say “save ₹5 lakh for a house down payment.”</li>
+      <li><strong>Measurable:</strong> Attach metrics—“save ₹13,900 each month” for three years.</li>
+      <li><strong>Achievable:</strong> Ensure the goal stretches you without breaking your budget.</li>
+      <li><strong>Relevant:</strong> Align each goal with your personal values and family needs.</li>
+      <li><strong>Time-bound:</strong> Set a firm deadline, such as “within three years.”</li>
+    </ul>
+    <div class="tip"><strong>Did you know?</strong> Writing down SMART goals makes you 42% more likely to achieve them.</div>
+  </section>
+
+  <section>
+    <h2>The Three-Tier Goal Framework</h2>
+    <p>Organize your aspirations into three time horizons:</p>
+    <ul>
+      <li><strong>Short-term (1–3 years):</strong> Emergency fund, annual vacation, gadget upgrades.</li>
+      <li><strong>Medium-term (3–10 years):</strong> Car purchase, home down payment, children’s school.</li>
+      <li><strong>Long-term (10+ years):</strong> Retirement corpus, children’s marriage, legacy wealth.</li>
+    </ul>
+
+    <div class="chart-container">
+      <h3 class="text-center">Number of Typical Goals by Time Horizon</h3>
+      <canvas id="goalsChart"></canvas>
+    </div>
+  </section>
+
+  <section>
+    <h2>Prioritizing and Accounting for Inflation</h2>
+    <ul>
+      <li><strong>List & Rank:</strong> Inventory all goals, then rank by urgency—e.g., young families often prioritize an emergency fund and term insurance over luxury spending.</li>
+      <li><strong>Inflation Adjustment:</strong> India’s CPI inflation was 2.82% in May 2025. At 6–8% annual inflation, a ₹10 lakh education fund today becomes ~₹21.6 lakh in ten years.</li>
+      <li><strong>Emotional Motivation:</strong> Attach compelling reasons—“maintain lifestyle without burdening my children”—to fuel consistency.</li>
+    </ul>
+    <blockquote class="blockquote">Clarity + Emotion + Action = Achievable Goals</blockquote>
+  </section>
+
+  <section>
+    <h2>Breaking Down Big Dreams Into Monthly Steps</h2>
+    <p>Divide large targets into monthly SIPs. To reach ₹15 lakh in 10 years at 10% returns, you'd need roughly ₹7,505/month.</p>
+    <div class="tip"><strong>Use Online SIP Calculators:</strong> They translate future needs into exact monthly contributions.</div>
+  </section>
+
+  <section>
+    <h2>Quarterly Review & Adaptation</h2>
+    <p>Conduct goal reviews every three months to adjust contributions, timelines, or priorities—keeping your plan both flexible and on track.</p>
+  </section>
+
+  <section>
+    <h2>Key Takeaways</h2>
+    <ul>
+      <li>SMART goals boost success by adding clarity and structure.</li>
+      <li>Segment goals into short, medium, and long horizons for focus.</li>
+      <li>Factor in current inflation (∼2.82% YoY) and review quarterly.</li>
+    </ul>
+  </section>
+
+  <footer class="mt-5 mb-4 text-center text-muted">
+    <small>&copy; 2025 FinEdge India</small>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const ctx = document.getElementById('goalsChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Short-term','Medium-term','Long-term'],
+        datasets: [{
+          label: 'Typical Goal Count',
+          data: [3, 3, 3],
+          backgroundColor: ['#4e73df','#1cc88a','#f6c23e'],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        plugins: {
+          legend: { display: false },
+          title: { display: true, text: 'Count of Goals by Horizon' }
+        },
+        scales: {
+          x: { beginAtZero: true, suggestedMax: 5 }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

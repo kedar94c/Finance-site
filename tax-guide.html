@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="description" content="Comprehensive guide to income tax in India, including deductions, slabs, and tools.">
+  <title>Tax Guide - FinEdge India</title>
+  <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+  <!-- Header and Nav (copy from index.html for consistency) -->
+  <header class="border-bottom shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center py-3">
+      <div class="d-flex align-items-center">
+        <img src="/assets/logo.svg" alt="FinEdge Logo" width="40" class="me-2">
+        <h1 class="h4 mb-0 fw-bold">FinEdge India - Tax Guide</h1>
+      </div>
+      <div>
+        <button id="darkToggle" class="btn btn-outline-secondary me-2"><i class="fa-solid fa-moon"></i></button>
+        <button id="langToggle" class="btn btn-outline-primary">हिन्दी</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div id="mainNav" class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="/#hero">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#calc">Calculators</a></li>
+          <li class="nav-item"><a class="nav-link" href="/education.html">Education</a></li>
+          <li class="nav-item"><a class="nav-link" href="/#news">News</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/tax-guide.html">Tax Guide</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="py-5">
+    <div class="container">
+      <h2 class="mb-4">Income Tax Guide for India</h2>
+
+      <!-- Tax Calculator Quick Access -->
+      <div class="alert alert-info" role="alert">
+        <h4 class="alert-heading">Quick Access: Tax Calculator</h4>
+        <p>Try our interactive tax calculator to compute your liability based on your inputs.</p>
+        <a href="/index.html?from=guide#taxTab" class="btn btn-success">Go to Tax Calculator</a>
+      </div>
+
+      <!-- Tab Navigation -->
+      <ul class="nav nav-tabs mb-3" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="deduc-tab" data-bs-toggle="tab" data-bs-target="#deducTab" type="button" role="tab" aria-controls="deducTab" aria-selected="true">
+            Deductions Guide
+          </button>
+        </li>
+          <li class="nav-item" role="presentation">
+    <button class="nav-link" id="oldtab-tab" data-bs-toggle="tab" data-bs-target="#oldTab" type="button" role="tab" aria-controls="oldTab" aria-selected="false">
+      Old Tax Regime
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="newtab25-tab" data-bs-toggle="tab" data-bs-target="#newTab25" type="button" role="tab" aria-controls="newTab25" aria-selected="false">
+      New Regime AY 2025-26
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="newtab26-tab" data-bs-toggle="tab" data-bs-target="#newTab26" type="button" role="tab" aria-controls="newTab26" aria-selected="false">
+      New Regime AY 2026-27
+    </button>
+  </li>
+</ul>
+
+      <div class="tab-content">
+        <!-- Deduction Table Guide Tab -->
+        <div class="tab-pane fade show active" id="deducTab" role="tabpanel" aria-labelledby="deduc-tab">
+          <h3 class="mt-3 mb-3">Deductions Reference (Old vs. New Regime)</h3>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Deduction</th>
+                <th>Old Regime Status</th>
+                <th>New Regime Status</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>EE PF Contribution</td><td>Non-Taxable (under 80C, up to ₹1.5 lakh)</td><td>Taxable</td><td>Employee's share; combined with other 80C items[1].</td></tr>
+              <tr><td>ER PF Contribution</td><td>Non-Taxable</td><td>Non-Taxable</td><td>Employer's share; excluded from CTC[1].</td></tr>
+              <tr><td>Retirals (e.g., Gratuity)</td><td>Non-Taxable (up to limits)</td><td>Taxable</td><td>Exempt up to ₹20 lakh lifetime in old[2].</td></tr>
+              <tr><td>HRA Received</td><td>Non-Taxable (exemption calculated)</td><td>Taxable</td><td>Available only in old regime[1].</td></tr>
+              <tr><td>LTA Claimed</td><td>Non-Taxable (up to limits)</td><td>Taxable</td><td>Block of 4 years; old regime only[1].</td></tr>
+              <tr><td>ELSS/80C Investments</td><td>Non-Taxable (up to ₹1.5 lakh)</td><td>Taxable</td><td>Includes insurance; old regime exclusive[1].</td></tr>
+              <tr><td>Employer NPS Contribution</td><td>Non-Taxable (up to 10% of basic)</td><td>Non-Taxable (up to 10% of basic)</td><td>Allowed in both regimes[1].</td></tr>
+              <tr><td>Other Deductions (e.g., 80D)</td><td>Non-Taxable (up to limits)</td><td>Taxable</td><td>Health insurance; old regime only[1].</td></tr>
+              <tr><td>Standard Deduction</td><td>Non-Taxable (₹50,000)</td><td>Non-Taxable (₹75,000)</td><td>Auto-applied for salaried[1].</td></tr>
+            </tbody>
+          </table>
+        <div class="mt-3">
+            <h6>Official Resources</h6>
+            <ul>
+              <li><a href="https://incometaxindia.gov.in/Pages/default.aspx" target="_blank">Income Tax India Portal - Official Website</a></li>
+              <li><a href="https://incometaxindia.gov.in/Pages/tax-laws-rules.aspx" target="_blank">Income Tax Act, 1961 - Full Text</a></li>
+            </ul>
+          </div>
+        </div>
+        <!-- Old Tax Regime Tab -->
+        <div class="tab-pane fade" id="oldTab" role="tabpanel" aria-labelledby="oldtab-tab">
+          <h3 class="mt-3 mb-3">Old Tax Regime</h3>
+          <p>Below are the tax slabs for the old regime. Slabs vary by age group (Under 60, 60-79, 80+).</p>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Income Slab (₹)</th>
+                <th>Rate (Under 60)</th>
+                <th>Rate (60-79)</th>
+                <th>Rate (80+)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>0 - 2,50,000</td><td>0%</td><td>0% (up to 3,00,000)</td><td>0% (up to 5,00,000)</td></tr>
+              <tr><td>2,50,001 - 5,00,000</td><td>5%</td><td>5%</td><td>0%</td></tr>
+              <tr><td>5,00,001 - 10,00,000</td><td>20%</td><td>20%</td><td>20%</td></tr>
+              <tr><td>Above 10,00,000</td><td>30%</td><td>30%</td><td>30%</td></tr>
+            </tbody>
+          </table>
+          <div class="mt-3">
+            <h6>Official Resources</h6>
+            <ul>
+              <li><a href="https://incometaxindia.gov.in/Pages/default.aspx" target="_blank">Income Tax India Portal - Official Website</a></li>
+              <li><a href="https://incometaxindia.gov.in/Pages/tax-laws-rules.aspx" target="_blank">Income Tax Act, 1961 - Full Text</a></li>
+            </ul>
+          </div>
+        </div>
+
+  <!-- New Tax Regime AY 2025-26 Tab -->
+  <div class="tab-pane fade" id="newTab25" role="tabpanel" aria-labelledby="newtab25-tab">
+    <h3 class="mt-3 mb-3">New Tax Regime – Assessment Year 2025-26 (FY 2024-25)</h3>
+    <table class="table table-bordered">
+      <thead>
+        <tr><th>Income Slab (₹)</th><th>Rate</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>0 – 3,00,000</td><td>0%</td></tr>
+        <tr><td>3,00,001 – 7,00,000</td><td>5%</td></tr>
+        <tr><td>7,00,001 – 10,00,000</td><td>10%</td></tr>
+        <tr><td>10,00,001 – 12,00,000</td><td>15%</td></tr>
+        <tr><td>12,00,001 – 15,00,000</td><td>20%</td></tr>
+        <tr><td>Above 15,00,000</td><td>30%</td></tr>
+      </tbody>
+    </table>
+    <div class="mt-3">
+      <h6>Official Resources</h6>
+      <ul>
+        <li><a href="https://incometaxindia.gov.in/Pages/budget-updates.aspx" target="_blank">Budget 2025 Updates and Notifications</a></li>
+        <li><a href="https://incometaxindia.gov.in/Pages/tools/income-tax-calculator.aspx" target="_blank">Official Income Tax Calculator</a></li>
+      </ul>
+    </div>
+  </div>
+  <!-- New Tax Regime AY 2026-27 Tab -->
+  <div class="tab-pane fade" id="newTab26" role="tabpanel" aria-labelledby="newtab26-tab">
+    <h3 class="mt-3 mb-3">New Tax Regime – Assessment Year 2026-27 (FY 2025-26)</h3>
+    <table class="table table-bordered">
+      <thead>
+        <tr><th>Income Slab (₹)</th><th>Rate</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>0 – 4,00,000</td><td>0%</td></tr>
+        <tr><td>4,00,001 – 8,00,000</td><td>5%</td></tr>
+        <tr><td>8,00,001 – 12,00,000</td><td>10%</td></tr>
+        <tr><td>12,00,001 – 16,00,000</td><td>15%</td></tr>
+        <tr><td>16,00,001 – 20,00,000</td><td>20%</td></tr>
+        <tr><td>20,00,001 – 24,00,000</td><td>25%</td></tr>
+        <tr><td>Above 24,00,000</td><td>30%</td></tr>
+      </tbody>
+    </table>
+          <div class="mt-3">
+            <h6>Official Resources</h6>
+            <ul>
+              <li><a href="https://incometaxindia.gov.in/Pages/default.aspx" target="_blank">Income Tax India Portal - Official Website</a></li>
+              <li><a href="https://incometaxindia.gov.in/Pages/budget-updates.aspx" target="_blank">Budget 2025 Updates and Notifications</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-4 bg-dark text-white text-center">
+    <div class="container small">
+      <p data-i18n="disclaimer">Disclaimer: Tools & content are for educational purposes only.</p>
+      © 2025 FinEdge India
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

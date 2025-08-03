@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="description" content="SIP • EMI • Tax • Retirement calculators and finance guides. The top green-themed financial portal with free tools, articles, blogs, and more for Indian retail investors.">
+  <meta name="keywords" content="SIP calculator, EMI calculator, income tax calculator, retirement calculator, finance guide India, Hindi finance">
+   <!-- <meta property="og:title" content="FinEdge India – Best Finance Tools and Guides">
+  <meta property="og:description" content="Powerful SIP, EMI, Tax calculators and smart financial guides in English and Hindi.">
+  <meta property="og:type" content="website">-->
+  <title>FinEdge India – SIP, EMI, Tax Calculators & Guides</title>
+  <link rel="icon" href="/assets/" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "FinEdge India",
+    "url": "https://yourdomain.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://yourdomain.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+</head>
+<body>
+<header class="border-bottom shadow-sm">
+  <div class="container d-flex justify-content-between align-items-center py-3">
+    <div class="d-flex align-items-center">
+      <img src="assets/logo.svg" alt="FinEdge Logo" width="40" class="me-2">
+      <a href="index.html" class="text-decoration-none" style="background-color: transparent !important;">
+  <h1 class="h4 mb-0 fw-bold text-body">FinEdge India</h1>
+</a>
+    </div>
+    <div>
+      <button id="darkToggle" class="btn btn-outline-secondary"><i class="fa-solid fa-moon"></i></button>
+      <button id="langToggle" class="btn btn-outline-primary">हिन्दी</button>
+    </div>
+  </div>
+</header>
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div id="mainNav" class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link active" href="#hero" data-i18n="nav_home">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#calc" data-i18n="nav_calc">Calculators</a></li>
+        <li class="nav-item"><a class="nav-link" href="education.html" data-i18n="nav_edu">Education</a></li>
+        <li class="nav-item"><a class="nav-link" href="#news" data-i18n="nav_news">News</a></li>
+        <li class="nav-item"><a class="nav-link" href="tax-guide.html" target="_blank" data-i18n="nav_taxguide">Tax Guide</a></li>
+<<<<<<< HEAD
+=======
+        <li class="nav-item"><a class="nav-link" href="budget7.html" target="_blank" data-i18n="nav_budget">Budget</a></li>
+>>>>>>> c14b458 (Initial commit)
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<section id="hero" class="py-5 text-center bg-light">
+  <div class="container">
+    <h2 class="display-5 fw-bold" data-i18n="hero_title">Master Your Money Journey</h2>
+    <p class="lead" data-i18n="hero_sub">Trusted tools & guides for Indian investors.</p>
+    <a href="/#calc" class="btn btn-primary btn-lg" data-i18n="cta_start">Calculate Now</a>
+  </div>
+</section>
+<!-- Calculators -->
+<section id="calc" class="py-5">
+  <div class="container">
+    <h2 class="mb-4" data-i18n="calc_title">Financial Calculators</h2>
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#sipTab" data-i18n="tab_sip">SIP</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#emiTab" data-i18n="tab_emi">EMI</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#taxTab" data-i18n="tab_tax">Tax</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#retTab" data-i18n="tab_ret">Retirement</button></li>
+    </ul>
+
+    <div class="tab-content bg-white p-4 border border-top-0 rounded-bottom">
+      <!-- SIP Tab -->
+      <div class="tab-pane fade show active" id="sipTab">
+        <form id="sipForm" class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label" data-i18n="sip_amount">Monthly SIP (₹)</label>
+            <input type="number" id="sipAmt" class="form-control" min="100" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" data-i18n="sip_return">Return (% p.a.)</label>
+            <input type="number" id="sipRate" class="form-control" value="12" step="0.1">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" data-i18n="sip_years">Duration (Years)</label>
+            <input type="number" id="sipYears" class="form-control" value="10" min="1">
+          </div>
+          <div class="col-12 text-end">
+            <button class="btn btn-success" type="submit">Compute</button>
+          </div>
+        </form>
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <canvas id="sipChart" height="180" class="d-none"></canvas>
+          </div>
+          <div class="col-md-8">
+            <canvas id="sipLine" height="160" class="d-none"></canvas>
+          </div>
+        </div>
+        <div id="sipOut" class="mt-3 fw-semibold"></div>
+      </div>
+      
+      <!-- EMI Tab -->
+      <div class="tab-pane fade" id="emiTab">
+        <form id="emiForm" class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Loan Amount (₹)</label>
+            <input type="number" id="loanAmt" class="form-control" min="10000" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Interest Rate (% p.a.)</label>
+            <input type="number" id="emiRate" class="form-control" value="8.5" step="0.1">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Tenure (Years)</label>
+            <input type="number" id="loanYears" class="form-control" value="5" min="1">
+          </div>
+          <div class="col-12 text-end">
+            <button class="btn btn-success" type="submit">Compute</button>
+          </div>
+        </form>
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <canvas id="emiChart" height="180" class="d-none"></canvas>
+          </div>
+          <div class="col-md-8">
+            <canvas id="emiLine" height="160" class="d-none"></canvas>
+          </div>
+        </div>
+        <div id="emiOut" class="mt-3 fw-semibold"></div>
+      </div>
+      
+      <!-- Tax Tab -->
+      <div class="tab-pane fade" id="taxTab">
+        <form id="taxForm" class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Cost to Company (CTC) (₹ - Yearly)</label>
+            <input type="number" id="ctc" class="form-control" min="0" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Basic Salary (% of CTC - Yearly Basis)</label>
+            <input type="number" id="basicPercent" class="form-control" value="40" min="0" max="100" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">EE PF Contribution (₹ - Monthly)</label>
+            <input type="number" id="eePf" class="form-control" min="0">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">ER PF Contribution (₹ - Monthly)</label>
+            <input type="number" id="erPf" class="form-control" min="0">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Retirals (e.g., Gratuity) (₹ - Yearly)</label>
+            <input type="number" id="retirals" class="form-control" min="0">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">HRA Received (₹ - Yearly)</label>
+            <input type="number" id="hraReceived" class="form-control" min="0">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Rent Paid (₹ - Yearly, for HRA exemption)</label>
+            <input type="number" id="rentPaid" class="form-control" min="0">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">LTA Claimed (₹ - Yearly)</label>
+            <input type="number" id="lta" class="form-control" min="0">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">ELSS/80C Investments (₹ - Yearly)</label>
+            <input type="number" id="elss" class="form-control" min="0" max="150000">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Employer NPS Contribution (₹ - Yearly)</label>
+            <input type="number" id="npsEmployer" class="form-control" min="0">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Other Deductions (e.g., 80D Medical) (₹ - Yearly)</label>
+            <input type="number" id="otherDeductions" class="form-control" min="0">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Assessment Year (AY)</label>
+            <select id="assessmentYear" class="form-control">
+              <option value="2025-26">AY 2025-26 (FY 2024-25)</option>
+              <option value="2026-27">AY 2026-27 (FY 2025-26)</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Age Group</label>
+            <select id="ageGroup" class="form-control">
+              <option value="under60">Under 60</option>
+              <option value="60-79">60-79 (Senior)</option>
+              <option value="80+">80+ (Super Senior)</option>
+            </select>
+          </div>
+          <div class="col-12 text-end">
+            <button class="btn btn-success" type="submit">Compute</button>
+          </div>
+        </form>
+        <div id="taxOut" class="mt-3 fw-semibold"></div>
+        <!-- Static Deductions Reference Table -->
+        <div class="mt-4">
+          <h6>Deductions Reference (Old vs. New Regime)</h6>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Deduction</th>
+                <th>Old Regime Status</th>
+                <th>New Regime Status</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>EE PF Contribution</td><td>Non-Taxable (under 80C, up to ₹1.5 lakh)</td><td>Taxable</td><td>Employee's share; combined with other 80C items.</td></tr>
+              <tr><td>ER PF Contribution</td><td>Non-Taxable</td><td>Non-Taxable</td><td>Employer's share; excluded from CTC.</td></tr>
+              <tr><td>Retirals (e.g., Gratuity)</td><td>Non-Taxable (up to limits)</td><td>Taxable</td><td>Exempt up to ₹20 lakh lifetime in old.</td></tr>
+              <tr><td>HRA Received</td><td>Non-Taxable (exemption calculated)</td><td>Taxable</td><td>Available only in old regime.</td></tr>
+              <tr><td>LTA Claimed</td><td>Non-Taxable (up to limits)</td><td>Taxable</td><td>Block of 4 years; old regime only.</td></tr>
+              <tr><td>ELSS/80C Investments</td><td>Non-Taxable (up to ₹1.5 lakh)</td><td>Taxable</td><td>Includes insurance; old regime exclusive.</td></tr>
+              <tr><td>Employer NPS Contribution</td><td>Non-Taxable (up to 10% of basic)</td><td>Non-Taxable (up to 10% of basic)</td><td>Allowed in both regimes.</td></tr>
+              <tr><td>Other Deductions (e.g., 80D)</td><td>Non-Taxable (up to limits)</td><td>Taxable</td><td>Health insurance; old regime only.</td></tr>
+              <tr><td>Standard Deduction</td><td>Non-Taxable (₹50,000)</td><td>Non-Taxable (₹75,000)</td><td>Auto-applied for salaried.</td></tr>
+            </tbody>
+          </table>
+          <small>Source: Income Tax Department guidelines[1].</small>
+        </div>
+      </div>
+      
+      <!-- Retirement Tab -->
+      <div class="tab-pane fade" id="retTab">
+        <form id="retForm" class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Current Monthly Expense (₹)</label>
+            <input type="number" id="currentMonthlyExp" class="form-control" min="1000" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Current Age</label>
+            <input type="number" id="currentAge" class="form-control" value="35" min="18" max="100" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Retirement Age</label>
+            <input type="number" id="retirementAge" class="form-control" value="60" min="18" max="100" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Life Expectancy Age</label>
+            <input type="number" id="lifeExpectancyAge" class="form-control" value="85" min="18" max="120" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Inflation Rate (% p.a.)</label>
+            <input type="number" id="inflationRate" class="form-control" value="6" step="0.1" min="0" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">
+              Post-Retirement Return (% p.a.)
+              <i class="bi bi-info-circle" data-bs-toggle="tooltip" title="Return on Retirement corpus (mostly FD)"></i>
+            </label>
+            <input type="number" id="postRetReturn" class="form-control" value="7" step="0.1" min="0" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">
+              Pre-Retirement Return (% p.a.)
+              <i class="bi bi-info-circle" data-bs-toggle="tooltip" title="Current return on monthly investment (SIP, RD)"></i>
+            </label>
+            <input type="number" id="preRetReturn" class="form-control" value="10" step="0.1" min="0" required>
+          </div>
+          <div class="col-12 text-end">
+            <button class="btn btn-success" type="submit">Compute</button>
+          </div>
+        </form>
+        <div id="retOut" class="mt-3 fw-semibold"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ads" class="py-5 text-center">
+  <div class="container">
+    <h2 class="mb-4" data-i18n="ads_title">Sponsored</h2>
+    <div class="ad-box shadow-sm mb-4">
+      <p class="m-0">[ 300 × 250 Ad Placeholder ]</p>
+    </div>
+    <a href="https://partner.example.com/?ref=finedge" target="_blank" class="affiliate-box d-block p-4 rounded fw-semibold text-decoration-none">
+      <i class="fa-solid fa-chart-line me-2"></i>
+      Open ZERO-brokerage Demat Account →
+    </a>
+  </div>
+</section>
+
+<section id="blog" class="py-5 bg-light">
+  <div class="container">
+    <h2 class="mb-4" data-i18n="blog_title">Latest Blogs</h2>
+    <div id="blogGrid" class="row g-4"></div>
+    <p class="mt-4 text-end">
+      <a href="/education.html" class="btn btn-outline-primary" data-i18n="blog_more">More articles →</a>
+    </p>
+  </div>
+</section>
+
+<section id="news" class="py-5">
+  <div class="container">
+    <h2 class="mb-3" data-i18n="news_title">Market News</h2>
+    <ul class="list-group" id="newsList"></ul>
+  </div>
+</section>
+
+<section id="contact" class="py-5 bg-light">
+  <div class="container text-center">
+    <a href="contact.html" class="btn btn-outline-dark btn-lg">
+      <i class="fa-solid fa-envelope me-2"></i> Get in Touch →
+    </a>
+  </div>
+</section>
+
+<!-- Replace existing footer with enhanced layout -->
+<footer class="py-4 bg-dark text-white text-center">
+  <div class="container small">
+    <div class="row justify-content-center mb-3">
+      <div class="col-auto">
+        <a href="#calc" class="btn btn-outline-light btn-sm mb-2">Calculators</a>
+      </div>
+      <div class="col-auto">
+        <a href="education.html" class="btn btn-outline-light btn-sm mb-2">Education</a>
+      </div>
+      <div class="col-auto">
+        <a href="tax-guide.html" class="btn btn-outline-light btn-sm mb-2">Tax Guide</a>
+      </div>
+      <div class="col-auto">
+        <a href="contact.html" class="btn btn-outline-light btn-sm mb-2">Contact</a>
+      </div>
+    </div>
+    <p data-i18n="disclaimer">Disclaimer: Tools & content are for educational purposes only.</p>
+    <p class="mb-0">© 2025 FinEdge India</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="assets/main.js"></script>
+</body>
+</html>

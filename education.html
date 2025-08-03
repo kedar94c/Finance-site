@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Financial Education – FinEdge India</title>
+  <link rel="icon" href="assets/logo.svg" />
+  <link rel="stylesheet" href="assets/style.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Header & Navbar -->
+  <header class="border-bottom shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center py-3">
+      <div class="d-flex align-items-center">
+        <img src="assets/logo.svg" width="40" class="me-2">
+        <a href="index.html" class="text-decoration-none" style="background-color: transparent !important;">
+  <h1 class="h4 mb-0 fw-bold text-body">FinEdge India</h1>
+</a>
+      </div>
+    </div>
+  </header>
+  <!--<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand" href="index.html#hero">Home</a>
+      <a class="nav-link" href="index.html#calc">Calculators</a>
+      <a class="nav-link active" href="education.html">Education</a>
+      <a class="nav-link" href="index.html#news">News</a>
+      <a class="nav-link" href="tax-guide.html">Tax Guide</a>
+    </div>
+  </nav>-->
+
+  <!-- Education Hub -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="mb-4">Financial Education Hub</h2>
+      <ul class="nav nav-tabs mb-4" id="eduTab" role="tablist">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#goal">Goal & Budgeting</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#emergency">Emergency Fund</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tax">Tax Saving</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#insurance">Insurance</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#investing">Investing</button></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane fade show active p-3" id="goal" data-src="content/education/goal-budget.json"></div>
+        <div class="tab-pane fade p-3" id="emergency" data-src="content/education/emergency.json"></div>
+        <div class="tab-pane fade p-3" id="tax" data-src="content/education/tax-saving.json"></div>
+        <div class="tab-pane fade p-3" id="insurance" data-src="content/education/insurance.json"></div>
+        <div class="tab-pane fade p-3" id="investing" data-src="content/education/investing.json"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-4 bg-dark text-white text-center">
+    <div class="container small">
+      <p>Disclaimer: Tools & content are educational only.</p>
+      <p>© 2025 FinEdge India</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+// ——— MAIN.JS content starts here ———
+
+document.addEventListener('DOMContentLoaded', () => {
+  const tabTriggers = document.querySelectorAll('#eduTab button[data-bs-toggle="tab"]');
+
+  function loadTabContent(pane) {
+    if (pane.dataset.loaded === 'true') return;
+    const src = pane.dataset.src;
+    pane.innerHTML = '<div class="text-center p-5"><div class="spinner-border text-success"></div></div>';
+    fetch(src)
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(arr => {
+        pane.innerHTML = '';
+        if (!arr.length) {
+          pane.textContent = 'No articles available.';
+        } else {
+          const row = document.createElement('div');
+          row.className = 'row g-4';
+          arr.forEach(a => {
+            const col = document.createElement('div');
+            col.className = 'col-md-4';
+            col.innerHTML = `
+              <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                  <h5 class="card-title">${a.title}</h5>
+                  <p class="card-text">${a.description}</p>
+                  <a href="${a.link}" class="btn btn-success btn-sm">Read →</a>
+                </div>
+              </div>`;
+            row.append(col);
+          });
+          pane.append(row);
+        }
+        pane.dataset.loaded = 'true';
+      })
+      .catch(() => {
+        pane.innerHTML = '<div class="alert alert-danger">Failed to load content.</div>';
+      });
+  }
+
+  tabTriggers.forEach(btn => {
+    btn.addEventListener('shown.bs.tab', e => {
+      const pane = document.querySelector(e.target.getAttribute('data-bs-target'));
+      if (pane) loadTabContent(pane);
+    });
+  });
+
+  // Load initial tab
+  const init = document.querySelector('.tab-pane.show.active');
+  if (init) loadTabContent(init);
+});
+  </script>
+
+</body>
+</html>

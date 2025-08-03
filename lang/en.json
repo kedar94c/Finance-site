@@ -1,0 +1,23 @@
+{
+  "brand":"FinEdge India",
+  "nav_home":"Home",
+  "nav_calc":"Calculators",
+  "nav_edu":"Education",
+  "nav_news":"News",
+  "hero_title":"Master Your Money Journey",
+  "hero_sub":"Trusted tools & guides for Indian investors.",
+  "cta_start":"Calculate Now",
+  "calc_title":"Financial Calculators",
+  "news_title":"Market News",
+  "disclaimer":"Disclaimer: Tools & content are for educational purposes only.",
+  "tab_sip":"SIP",
+  "tab_emi":"EMI",
+  "tab_tax":"Tax",
+  "tab_ret":"Retirement",
+  "sip_amount":"Monthly SIP (₹)",
+  "sip_return":"Return (% p.a.)",
+  "sip_years":"Duration (Years)",
+  "ads_title":"Sponsored",
+  "blog_title":"Latest Blogs",
+  "blog_more":"More articles →"
+}

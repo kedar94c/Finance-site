@@ -1,0 +1,21 @@
+[
+  {
+    "title": "Mastering the 50/30/20 Rule",
+    "description": "A smart way to divide income between needs, wants, and savings.",
+    "link": "articles/503020-rule.html"
+  },
+
+  {
+    "title": "Budgeting and Goal Setting for Millennials and Gen Z",
+    "description": "Your Guide to Financial Freedom.",
+    "link": "articles/budgetinggoal.html"
+<<<<<<< HEAD
+  },
+  {
+    "title": "Budgeting for Beginners",
+    "description": "Simple steps to track income and expenses effectively.",
+    "link": "articles/20_07_2025.html"
+=======
+>>>>>>> c14b458 (Initial commit)
+  }
+]

@@ -1,0 +1,322 @@
+/* ===== Theme Variables (Uniform Green Palette) ===== */
+
+:root {
+  --primary: #059669; /* Deep green for nav, buttons */
+  --secondary: #10b981; /* Lighter green for accents */
+  --bg-light: #f0fdf4; /* Pale green background */
+  --bg-dark: #064e3b; /* Dark green for sections */
+  --text-light: #111827; /* Dark text for light mode */
+  --text-dark: #f3f4f6; /* Light text for dark mode */
+  --accent: #d1fae5; /* Highlight green */
+}
+
+[data-theme="dark"] {
+  --primary: #10b981; /* Inverted green for dark mode */
+  --secondary: #059669;
+  --bg-light: #064e3b;
+  --bg-dark: #022c22;
+  --text-light: #f3f4f6;
+  --text-dark: #94a3b8;
+}
+
+/* ===== Base (Force Green Consistency) ===== */
+
+body {
+  background: var(--bg-light);
+  color: var(--text-light);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Force all buttons and links to be green */
+
+a, .btn-primary, .btn, button {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: #fff !important;
+  transition: background 0.3s ease;
+}
+
+a:hover, .btn-primary:hover, .btn:hover, button:hover {
+  background: var(--secondary) !important;
+  border-color: var(--secondary) !important;
+  color: #fff !important;
+  opacity: 0.95;
+}
+
+/* Navbar styling - force green */
+
+.navbar-dark, .bg-primary {
+  background: var(--primary) !important;
+  background-color: var(--primary) !important;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: #fff !important;
+}
+
+.navbar-dark .nav-link.active {
+  font-weight: 600;
+  text-decoration: underline;
+  color: #fff !important;
+}
+
+.navbar-dark .navbar-toggler {
+  border-color: rgba(255,255,255,0.5) !important;
+}
+
+/* Success buttons (Compute) */
+
+.btn-success {
+  background: var(--secondary) !important;
+  border-color: var(--secondary) !important;
+  color: #fff !important;
+}
+
+.btn-success:hover {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: #fff !important;
+}
+
+/* Outline buttons */
+
+.btn-outline-primary {
+  color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  background: transparent !important;
+}
+
+.btn-outline-primary:hover {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: #fff !important;
+}
+
+.btn-outline-secondary {
+  color: var(--text-light) !important;
+  border-color: var(--text-light) !important;
+  background: transparent !important;
+}
+
+.btn-outline-secondary:hover {
+  background: var(--text-light) !important;
+  border-color: var(--text-light) !important;
+  color: var(--bg-light) !important;
+}
+
+/* Tab styling */
+
+.nav-tabs .nav-link {
+  background: transparent !important; /* Force transparent background to prevent blending */
+  border: none;
+  color: var(--primary) !important; /* Ensure text is visible on light background */
+}
+
+.nav-tabs .nav-link.active {
+  background: var(--primary) !important;
+  color: #fff !important;
+  border-color: var(--primary) !important;
+}
+
+.nav-tabs .nav-link:hover {
+  background: var(--secondary) !important;
+  color: #fff !important;
+  border-color: var(--secondary) !important;
+  opacity: 1; /* Ensure full visibility on hover */
+}
+
+/* ===== Modern Cards ===== */
+
+.card-glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.card, .tab-content {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--accent);
+}
+
+.blog-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid var(--accent);
+}
+
+.blog-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 26px rgba(5, 150, 105, 0.15);
+}
+
+/* ===== Ads & Affiliate ===== */
+
+.ad-box {
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  border: 2px dashed var(--secondary);
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+  color: var(--primary);
+}
+
+.affiliate-box {
+  background: var(--secondary) !important;
+  color: #fff !important;
+  transition: background 0.3s ease;
+  text-decoration: none;
+}
+
+.affiliate-box:hover {
+  background: var(--primary) !important;
+  color: #fff !important;
+  text-decoration: none;
+}
+
+/* ===== Hero Section ===== */
+
+.bg-light {
+  background: linear-gradient(135deg, var(--bg-light) 0%, var(--accent) 100%) !important;
+}
+
+/* ===== Form Styling ===== */
+
+.form-control {
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.2rem rgba(5, 150, 105, 0.25);
+}
+
+.form-label {
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+/* ===== Charts ===== */
+
+canvas {
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: opacity 0.5s ease;
+}
+
+/* Keep doughnut charts small */
+
+#sipChart, #emiChart {
+  max-height: 380px;
+  max-width: 100%;
+  margin: auto;
+}
+
+/* Line chart container */
+
+#sipLine, #emiLine {
+  position: relative;
+  max-height: 380px; /* Updated height for taller line charts */
+  max-width: 100%;
+  margin: auto;
+  background: rgba(16, 185, 129, 0.05);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+/* Chart layout refinements */
+
+.row canvas {
+  width: 100% !important;
+  max-width: none;
+}
+
+.col-md-4 canvas {
+  max-width: 180px;
+  margin: auto;
+  display: block;
+}
+
+.col-md-8 canvas {
+  max-width: 100%;
+}
+
+/* ===== Lists and Content ===== */
+
+.list-group-item {
+  border-color: var(--accent);
+  background: #fff;
+}
+
+.list-group-item:hover {
+  background: var(--accent);
+}
+
+/* ===== Footer ===== */
+
+footer.bg-dark {
+  background: var(--bg-dark) !important;
+  color: var(--text-dark) !important;
+}
+
+/* ===== Responsive ===== */
+
+@media (max-width: 767px) {
+  .col-md-4, .col-md-8 {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}
+/* Themed Calculator Outputs */
+.calculator-output {
+  text-align: center;
+  padding: 15px;
+  background: var(--bg-light);  /* Pale green background */
+  border: 1px solid var(--accent);  /* Highlight border */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  color: var(--text-light);
+  font-size: 1.1rem;
+}
+
+.calculator-output strong {
+  color: var(--primary);  /* Deep green for labels */
+}
+
+.calculator-output small {
+  display: block;
+  margin-top: 10px;
+  font-style: italic;
+  color: var(--text-light);
+}
+
+/* Fade-In Animation (subtle entrance) */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Optional Blinking Animation (apply via class like 'blink' if needed) */
+.blink {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}

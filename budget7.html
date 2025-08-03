@@ -1,0 +1,2120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Professional AI-driven budget planner for Indian Millennials and Gen Z to track expenses, savings, and goals in rupees with the 50/30/20 rule.">
+  <meta name="keywords" content="budget planner, millennials finance, gen z finance, money management, India finance, 50/30/20 rule, AI recommendations">
+  <meta name="author" content="Your Finance Site">
+  <meta name="robots" content="index, follow">
+  <title>RupeeMentor Pro Budget Planner</title>
+  <link rel="canonical" href="https://rupeementor.in/tools/budget-planner">
+  <!-- Open Graph Tags -->
+  <meta property="og:title" content="RupeeMentor Pro Budget Planner">
+  <meta property="og:description" content="Master your finances with our AI-driven budget planner for Indian Millennials and Gen Z, featuring the 50/30/20 rule and interactive tools.">
+  <meta property="og:image" content="https://rupeementor.in/images/pro-budget-planner.jpg">
+  <meta property="og:url" content="https://rupeementor.in/tools/budget-planner">
+  <meta property="og:type" content="website">
+  <!-- Twitter Card Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="RupeeMentor Pro Budget Planner">
+  <meta name="twitter:description" content="Plan your finances with our professional, AI-driven budget planner for Indian Millennials and Gen Z.">
+  <meta name="twitter:image" content="https://rupeementor.in/images/pro-budget-planner.jpg">
+  <!-- Tailwind CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- SortableJS for Drag-and-Drop -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f9fafb;
+    }
+    .tab-content {
+      display: none;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      margin-top: -1px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .progress-bar {
+      background-color: #e5e7eb;
+      border-radius: 5px;
+      height: 20px;
+      overflow: hidden;
+    }
+    .progress {
+      background-color: #10b981;
+      height: 100%;
+      transition: width 0.5s ease;
+    }
+    .recommendation {
+      background-color: #dbeafe;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+    .recommendation:hover {
+      background-color: #bfdbfe;
+    }
+    .tooltip {
+      position: relative;
+    }
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      background-color: #1f2937;
+      color: white;
+      padding: 8px;
+      border-radius: 4px;
+      position: absolute;
+      z-index: 10;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      text-align: center;
+      font-size: 0.95em;
+    }
+    .tooltip:hover .tooltip-text,
+    .tooltip:focus-within .tooltip-text {
+      visibility: visible;
+    }
+    .sortable-chosen {
+      background-color: #f3f4f6;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 99;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index:50;
+    }
+    .modal:not(.hidden) {
+    display: flex;}
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+      z-index:60;
+    }
+    .ad-placeholder { text-align: center; color: #888; font-size: 0.9em; }
+    input:focus, select:focus, button:focus, .tab-button:focus {
+      outline: 2px solid #2563eb;
+      outline-offset: 2px;
+    }
+    .grid.grid-cols-1.sm\:grid-cols-3 .p-4 {
+  height: 120px; /* For sparkline rows: padding + 80px canvas */
+  overflow: hidden;
+}
+.p-4.bg-white.rounded-2xl.shadow:has(#momComparisonChart) {
+  height: 200px; /* For MoM chart row: padding + 150px canvas */
+  overflow: hidden;
+}
+canvas {
+  max-height: 100% !important;
+  width: 100% !important;
+}
+  </style>
+</head>
+<body class="min-h-screen">
+  <header class="bg-blue-600 text-white py-8 text-center">
+    <h1 class="text-4xl font-bold">RupeeMentor Pro Budget Planner</h1>
+    <p class="mt-2 text-lg">Master your money with AI-driven insights and the 50/30/20 rule!</p>
+      <div class="mt-4">
+      <span id="userDisplay" class="text-sm">Welcome, Guest |
+      <button id="authLink" class="underline hover:text-blue-200">Login/Sign Up</button> </span>
+      <button id="logoutBtn" class="hidden underline hover:text-blue-200">Logout</button>
+      
+      </div>    
+  </header>
+
+  <!-- Login Modal -->
+<div id="loginModal" class="modal hidden fixed inset-0 z-60 flex items-center justify-center bg-transparent">
+  <div class="modal-content bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md relative">
+    <h2 id="loginModalTitle" class="text-xl font-semibold mb-4">Login</h2>
+    <form id="loginForm">
+      <input type="text" name="username" placeholder="Username" class="w-full border rounded-lg p-2 mb-2" required autocomplete="username">
+      <input type="password" name="password" placeholder="Password" class="w-full border rounded-lg p-2 mb-2" required autocomplete="current-password">
+      <div id="loginError" class="text-red-600 text-sm mb-2 hidden" role="alert"></div>
+      <div class="flex justify-end gap-2">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Login</button>
+        <button type="button" onclick="openModal('signupModal'); closeModal('loginModal');" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Sign Up Instead</button>
+        <button type="button" onclick="closeModal('loginModal')" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Signup Modal -->
+<div id="signupModal" class="modal hidden fixed inset-0 z-60 flex items-center justify-center bg-transparent">
+  <div class="modal-content bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md relative">
+    <h2 id="signupModalTitle" class="text-xl font-semibold mb-4">Sign Up</h2>
+    <form id="signupForm">
+      <input type="text" name="username" placeholder="Username" class="w-full border rounded-lg p-2 mb-2" required autocomplete="username">
+      <input type="email" name="email" placeholder="Email" class="w-full border rounded-lg p-2 mb-2" required autocomplete="email">
+      <input type="password" name="password" placeholder="Password" class="w-full border rounded-lg p-2 mb-2" required autocomplete="new-password">
+      <div id="signupError" class="text-red-600 text-sm mb-2 hidden" role="alert"></div>
+      <div class="flex justify-end gap-2">
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">Sign Up</button>
+        <button type="button" onclick="openModal('loginModal'); closeModal('signupModal');" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Login Instead</button>
+        <button type="button" onclick="closeModal('signupModal')" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+  <!-- Modal Overlay -->
+  <div id="modalOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden" onclick="closeModal('loginModal'); closeModal('signupModal');"></div>
+
+  <!-- Goal Modal -->
+  <div id="goalModal" class="modal hidden" tabindex="-1" aria-modal="true" aria-labelledby="goalModalTitle" aria-hidden="true">
+    <div class="modal-content">
+      <h2 id="goalModalTitle" class="text-xl font-semibold mb-4">Add Savings Goal</h2>
+      <form id="goalForm">
+        <input type="text" name="description" placeholder="Goal (e.g., Goa Trip)" class="w-full border rounded-lg p-2 mb-2" aria-label="Goal Description" autocomplete="off">
+        <input type="number" name="amount" step="0.01" placeholder="Target Amount (₹)" class="w-full border rounded-lg p-2 mb-2" aria-label="Goal Amount" min="0">
+        <input type="date" name="date" class="w-full border rounded-lg p-2 mb-2" aria-label="Goal Date">
+        <select name="type" class="w-full border rounded-lg p-2 mb-2" aria-label="Goal Type">
+          <option value="Emergency Fund">Emergency Fund</option>
+          <option value="Travel">Travel</option>
+          <option value="Gadget">Gadget</option>
+          <option value="Investment">Investment</option>
+          <option value="Debt Repayment">Debt Repayment</option>
+          <option value="Other">Other</option>
+        </select>
+        <input type="number" name="saved" step="0.01" placeholder="Amount Saved (₹)" class="w-full border rounded-lg p-2 mb-2" aria-label="Amount Saved" min="0">
+        <div id="goalError" class="text-red-600 text-sm mb-2 hidden" role="alert"></div>
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Add</button>
+        <button type="button" onclick="closeModal('goalModal')" class="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400">Cancel</button>
+
+      </form>
+    </div>
+  </div>
+  <div id="modalOverlay" class="fixed inset-0 bg-black bg-opacity-50 hidden"></div>
+
+  <main class="max-w-5xl mx-auto p-6">
+    <!-- Month/Year Selector -->
+    <div class="bg-white p-4 rounded-lg shadow-md mb-6 fade-in">
+      <h2 class="text-lg font-semibold mb-3">Select Budget Period</h2>
+      <div class="flex space-x-4">
+        <select id="budgetMonth" class="border rounded-lg p-2" aria-label="Budget Month">
+          <option value="1">January</option><option value="2">February</option><option value="3">March</option>
+          <option value="4">April</option><option value="5">May</option><option value="6">June</option>
+          <option value="7">July</option><option value="8">August</option><option value="9">September</option>
+          <option value="10">October</option><option value="11">November</option><option value="12">December</option>
+        </select>
+        <select id="budgetYear" class="border rounded-lg p-2" aria-label="Budget Year">
+          <option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <!-- Dashboard Summary (Themed like 50/30/20 Block) -->
+<div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow mb-8">
+  <h2 class="text-lg font-semibold mb-4 text-gray-800">Monthly Summary</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6" aria-label="Summary boxes">
+    <!-- Total Income -->
+    <div class="bg-gray-50 p-4 rounded-lg shadow-md hover:shadow-lg transition tooltip" tabindex="0">
+      <p class="text-base font-semibold text-gray-700 mb-1">Total Income</p>
+      <p class="text-xl font-bold text-green-600">₹<span id="totalIncome">0</span></p>
+      <span class="tooltip-text">Your monthly income from all sources</span>
+    </div>
+
+    <!-- Total Expenses -->
+    <div class="bg-gray-50 p-4 rounded-lg shadow-md hover:shadow-lg transition tooltip" tabindex="0">
+      <p class="text-base font-semibold text-gray-700 mb-1">Total Expenses</p>
+      <p class="text-xl font-bold text-red-600">₹<span id="totalExpenses">0</span></p>
+      <span class="tooltip-text">Total spent this month</span>
+    </div>
+
+    <!-- Net Balance -->
+    <div class="bg-gray-50 p-4 rounded-lg shadow-md hover:shadow-lg transition tooltip" tabindex="0">
+      <p class="text-base font-semibold text-gray-700 mb-1">Net Balance</p>
+      <p class="text-xl font-bold text-blue-600">₹<span id="netBalance">0</span></p>
+      <span class="tooltip-text">Income minus expenses</span>
+    </div>
+  </div>
+</div>
+
+
+    <!-- 50/30/20 Allocation -->
+    <div class="bg-white p-4 rounded-lg shadow-md mb-6 fade-in">
+      <h2 class="text-lg font-semibold mb-3 text-gray-800">50/30/20 Budget Allocation</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="tooltip p-3 rounded-md shadow hover:shadow-lg transition duration-300 cursor-pointer" tabindex="0">
+          <p class="text-sm font-semibold text-gray-700 flex items-center">
+            <span class="inline-block w-2 h-2 rounded-full bg-green-400 mr-2"></span>
+            Needs (50%): <span class="ml-2 text-indigo-600 font-bold text-xl" id="needsBudget">0</span>
+          </p>
+          <p class="text-xs">Spent: <span class="font-semibold" id="needsSpent">0</span>
+            <span id="needsStatus" class="font-semibold text-xs ml-1"></span>
+          </p>
+          <div class="progress-bar mt-2"><div class="progress" id="needsProgress"></div></div>
+          <span class="tooltip-text">Essentials (rent, EMIs, bills, insurance)</span>
+        </div>
+        <div class="tooltip p-3 rounded-md shadow hover:shadow-lg transition duration-300 cursor-pointer" tabindex="0">
+          <p class="text-sm font-semibold text-gray-700 flex items-center">
+            <span class="inline-block w-2 h-2 rounded-full bg-yellow-400 mr-2"></span>
+            Wants (30%): <span class="ml-2 text-indigo-600 font-bold text-xl" id="wantsBudget">0</span>
+          </p>
+          <p class="text-xs">Spent: <span class="font-semibold" id="wantsSpent">0</span>
+            <span id="wantsStatus" class="font-semibold text-xs ml-1"></span>
+          </p>
+          <div class="progress-bar mt-2"><div class="progress" id="wantsProgress"></div></div>
+          <span class="tooltip-text">Fun & lifestyle (eating out, travel)</span>
+        </div>
+        <div class="tooltip p-3 rounded-md shadow hover:shadow-lg transition duration-300 cursor-pointer" tabindex="0">
+          <p class="text-sm font-semibold text-gray-700 flex items-center">
+            <span class="inline-block w-2 h-2 rounded-full bg-blue-400 mr-2"></span>
+            Savings/Debt (20%): <span class="ml-2 text-indigo-600 font-bold text-xl" id="savingsBudget">0</span>
+          </p>
+          <p class="text-xs">Saved: <span class="font-semibold" id="savingsSpent">0</span>
+            <span id="savingsStatus" class="font-semibold text-xs ml-1"></span>
+          </p>
+          <div class="progress-bar mt-2"><div class="progress" id="savingsProgress"></div></div>
+          <span class="tooltip-text">Goals, investments & repayments</span>
+        </div>
+      </div>
+      <div class="flex justify-end mt-4">
+        <button id="planBudgetBtn" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition">+ Plan Budget</button>
+        <button id="addGoalBtn" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition">+ Add Savings Goal</button>
+      </div>
+    </div>
+
+    <!-- Income, Expense, Savings Tabs -->
+    <!-- Income, Expense, Savings Tabs -->
+    <div id="planBudget">
+      <div class="bg-white rounded-lg shadow-lg mb-8" aria-label="income-expense-tabs">
+        <div class="flex border-b" role="tablist" aria-label="Income and Expense Tabs">
+          <button id="incomeTab" class="tab-button px-6 py-3 font-semibold text-gray-700 hover:bg-gray-100 focus:outline-none flex-1 text-center transition" role="tab" aria-selected="true" aria-controls="incomeContent">Income</button>
+          <button id="expenseTab" class="tab-button px-6 py-3 font-semibold text-gray-700 hover:bg-gray-100 focus:outline-none flex-1 text-center transition" role="tab" aria-selected="false" aria-controls="expenseContent">Expense</button>
+          <button id="savingsTab" class="tab-button px-6 py-3 font-semibold text-gray-700 hover:bg-gray-100 focus:outline-none flex-1 text-center transition" role="tab" aria-selected="false" aria-controls="savingsContent">Savings/Investments</button>
+        </div>
+        <div id="incomeContent" class="tab-content active" role="tabpanel" aria-labelledby="incomeTab">
+          <div class="p-6">
+            <h2 class="text-xl font-semibold mb-4">Add Income</h2>
+            <form id="incomeForm">
+              <input type="text" name="source" placeholder="Source (e.g., Salary, Freelance)" class="w-full border rounded-lg p-2 mb-2" aria-label="Income Source" autocomplete="off">
+              <input type="number" name="amount" step="0.01" placeholder="Amount (₹)" class="w-full border rounded-lg p-2 mb-2" aria-label="Income Amount" min="0">
+              <select name="frequency" class="w-full border rounded-lg p-2 mb-2" aria-label="Income Frequency">
+                <option value="monthly">Monthly</option>
+                <option value="one-time">One-Time</option>
+              </select>
+              <div id="incomeError" class="text-red-600 text-sm mb-2 hidden" role="alert"></div>
+              <button type="button" id="addIncomeBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Add Income</button>
+            </form>
+            <div id="incomeList" class="mt-4"></div>
+          </div>
+        </div>
+        <div id="expenseContent" class="tab-content" role="tabpanel" aria-labelledby="expenseTab">
+          <div class="p-6">
+            <h2 class="text-xl font-semibold mb-4">Add Expense</h2>
+            <form id="expenseForm">
+              <input type="text" name="description" id="expenseDescription" placeholder="Description (e.g., Zomato)" class="w-full border rounded-lg p-2 mb-2" aria-label="Expense Description" autocomplete="off">
+              <input type="number" name="amount" step="0.01" placeholder="Amount (₹)" class="w-full border rounded-lg p-2 mb-2" aria-label="Expense Amount" min="0">
+              <select name="category" id="expenseCategory" class="w-full border rounded-lg p-2 mb-2" aria-label="Expense Category">
+                <option value="">Select Category</option>
+              </select>
+              <div id="expenseError" class="text-red-600 text-sm mb-2 hidden" role="alert"></div>
+              <button type="button" id="addExpenseBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Add Expense</button>
+            </form>
+            <div id="expenseList" class="mt-4"></div>
+          </div>
+        </div>
+        <div id="savingsContent" class="tab-content" role="tabpanel" aria-labelledby="savingsTab">
+          <div class="p-6">
+            <h2 class="text-xl font-semibold mb-4">Add Savings/Investment</h2>
+            <form id="savingsForm">
+              <input type="text" name="description" id="savingsDescription" placeholder="Description (e.g., SIP, RD, Stock, LIC Premium)" class="w-full border rounded-lg p-2 mb-2" aria-label="Savings Description" autocomplete="off">
+              <input type="number" name="amount" step="0.01" placeholder="Amount (₹)" class="w-full border rounded-lg p-2 mb-2" aria-label="Savings Amount" min="0">
+              <select name="category" id="savingsCategory" class="w-full border rounded-lg p-2 mb-2" aria-label="Savings Category">
+                <option value="">Select Category</option>
+              </select>
+              <div id="savingsError" class="text-red-600 text-sm mb-2 hidden" role="alert"></div>
+              <button type="button" id="addSavingsBtn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">Add Savings/Investment</button>
+            </form>
+            <div id="savingsList" class="mt-4"></div>
+          </div>
+        </div>
+        <div class="flex justify-end mt-4">
+          <button id="exportExcelBtn" class="bg-blue-500 text-white px-2 py-0.75 rounded-lg hover:bg-green-600">Export to Excel</button>
+          <button id="exportPdfBtn" class="bg-blue-500 text-white px-2 py-0.75 rounded-lg hover:bg-red-600">Export to PDF</button>
+          <button id="resetDataBtn" class="bg-yellow-500 text-white px-2 py-0.75 rounded-lg hover:bg-yellow-700">Reset All Data</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Goals Section -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-8 fade-in">
+      <h2 class="text-xl font-semibold mb-4">Your Financial Goals</h2>
+      <div id="goalList" class="sortable"></div>
+    </div>
+
+    <!-- Spending Analysis -->
+   <div class="bg-white p-6 rounded-2xl shadow-lg mb-8 fade-in">
+
+  <h2 class="text-2xl font-semibold mb-6">Spending Analysis</h2>
+
+  <!-- Filter Row -->
+  <div class="mb-6">
+    <label for="expenseFilter" class="font-medium mr-2">Filter:</label>
+    <select id="expenseFilter" class="border rounded-lg p-2">
+      <option value="all">All Expenses</option>
+      <option value="fixed">Fixed (Rent, EMIs, Health Insurance)</option>
+      <option value="variable">Variable (Groceries, Transport, Utilities, Food)</option>
+      <option value="discretionary">Discretionary (Festivals, Travel, Entertainment)</option>
+    </select>
+  </div>
+
+  <!-- Row 1: Pie & Bar -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div class="p-4 bg-white rounded-2xl shadow">
+      <h3 class="text-lg font-semibold mb-2">Spending by Category</h3>
+      <canvas id="spendingPieChart"></canvas>
+    </div>
+    <div class="p-4 bg-white rounded-2xl shadow">
+      <h3 class="text-lg font-semibold mb-2">Spending Trends (6 mo)</h3>
+      <canvas id="spendingBarChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Row 2: Category Sparklines -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+    <div class="p-4 bg-white rounded-2xl shadow text-center">
+      <h3 class="text-md font-medium mb-2">Needs Trend</h3>
+      <canvas id="needsTrendChart" height="80"></canvas>
+    </div>
+    <div class="p-4 bg-white rounded-2xl shadow text-center">
+      <h3 class="text-md font-medium mb-2">Wants Trend</h3>
+      <canvas id="wantsTrendChart" height="80"></canvas>
+    </div>
+    <div class="p-4 bg-white rounded-2xl shadow text-center">
+      <h3 class="text-md font-medium mb-2">Savings Trend</h3>
+      <canvas id="savingsTrendChart" height="80"></canvas>
+    </div>
+  </div>
+
+  <!-- Row 3: MoM Comparison -->
+  <div class="p-4 bg-white rounded-2xl shadow">
+    <h3 class="text-lg font-semibold mb-2">Month‑over‑Month Comparison</h3>
+    <canvas id="momComparisonChart" height="150"></canvas>
+  </div>
+
+  <div id="recommendations" class="mt-6" aria-live="polite"></div>
+</div>
+
+    <!-- Ad Placeholder -->
+    <div class="ad-placeholder">
+      <p>Advertisement</p>
+      <p>[Insert Ad Code Here]</p>
+    </div>
+  </main>
+  <footer class="bg-gray-100 text-center py-6 mt-8">
+    <p>© 2025 RupeeMentor. All rights reserved. | <a href="https://rupeementor.in/privacy-policy" class="text-blue-600 hover:underline">Privacy Policy</a> | <a href="https://rupeementor.in/contact" class="text-blue-600 hover:underline">Contact Us</a></p>
+    <p>Need budgeting tips? Check our <a href="https://rupeementor.in/budgeting-financial-planning-millennials-genz-india" class="text-blue-600 hover:underline">guide for Millennials and Gen Z</a>.</p>
+  </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Initialize state
+  const BASE_URL = 'http://127.0.0.1:3000'; // Backend server URL
+  let currentUser = localStorage.getItem('username') || null;
+  let incomes = [];
+  let expenses = [];
+  let savings = [];
+  let goals = [];
+  let allSavings = [];
+  let allExpenses = [];
+  let pieChart, barChart;
+  let categories = [
+    'Rent', 'Groceries', 'Transportation', 'Entertainment', 'Festivals', 'Travel',
+    'EMIs', 'Utilities', 'Health Insurance', 'Other'
+  ];
+  let savingsCategories = [
+    'MF', 'FD', 'RD', 'PPF', 'Stock', 'Life Insurance', 'ULIP', 'COMMODITY', 'Other'
+  ];
+  // At the top, with other globals
+let needsTrendChartInstance, wantsTrendChartInstance, savingsTrendChartInstance, momComparisonChartInstance;
+  populateMonthAndYearDropdowns();
+  updateCategorySuggestions();
+  loadGoals();
+
+  // Helper: Fetch with timeout
+  const fetchWithTimeout = async (url, options = {}, timeout = 10000) => {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+    try {
+      const response = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(id);
+      return response;
+    } catch (error) {
+      clearTimeout(id);
+      throw error;
+    }
+  };
+
+  // Helper: Show error
+  function showError(elementId, message) {
+    const errorDiv = document.getElementById(`${elementId}Error`);
+    if (errorDiv) {
+      errorDiv.textContent = message;
+      errorDiv.classList.remove('hidden');
+      setTimeout(() => errorDiv.classList.add('hidden'), 5000);
+    } else {
+      console.warn(`Error div for ${elementId} not found`);
+    }
+  }
+
+  // Helper: Show success
+  function showSuccess(elementId, message) {
+    const errorDiv = document.getElementById(`${elementId}Error`);
+    if (errorDiv) {
+      errorDiv.textContent = message;
+      errorDiv.classList.remove('hidden', 'text-red-600');
+      errorDiv.classList.add('text-green-600');
+      setTimeout(() => errorDiv.classList.add('hidden'), 5000);
+    } else {
+      console.warn(`Success div for ${elementId} not found`);
+    }
+  }
+
+  // Helper: Open modal
+  window.openModal = function(modalId) {
+    document.getElementById(modalId)?.classList.remove('hidden');
+    document.getElementById('modalOverlay')?.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  };
+
+  // Helper: Close modal
+  window.closeModal = function(modalId) {
+    document.getElementById(modalId)?.classList.add('hidden');
+    document.getElementById('modalOverlay')?.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+  };
+
+  // Helper: Get localStorage array
+  function getLocalStorageArray(key) {
+    try {
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : [];
+    } catch (e) {
+      console.warn(`Error parsing localStorage key ${key}:`, e);
+      localStorage.removeItem(key);
+      return [];
+    }
+  }
+
+  // Helper: Merge guest data
+  function mergeGuestData() {
+    const selectedMonth = document.getElementById('budgetMonth')?.value || '1';
+    const selectedYear = document.getElementById('budgetYear')?.value || new Date().getFullYear();
+    const guestKey = `guest_${selectedYear}_${selectedMonth}`;
+    const guestData = getLocalStorageArray(guestKey);
+    if (guestData.incomes?.length || guestData.expenses?.length || guestData.savings?.length || guestData.goals?.length) {
+      incomes = [...incomes, ...(guestData.incomes || [])];
+      expenses = [...expenses, ...(guestData.expenses || [])];
+      savings = [...savings, ...(guestData.savings || [])];
+      goals = [...goals, ...(guestData.goals || [])];
+      if (currentUser) {
+        fetchWithTimeout(`${BASE_URL}/api/budget`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({
+            userId: localStorage.getItem('userId'),
+            incomes,
+            expenses,
+            savings,
+            goals,
+            month: selectedMonth,
+            year: selectedYear
+          })
+        }).then(() => {
+          localStorage.removeItem(guestKey);
+          updateDashboard();
+        }).catch(error => console.error('Error merging guest data:', error));
+      } else {
+        localStorage.setItem(guestKey, JSON.stringify({ incomes, expenses, savings, goals }));
+      }
+    }
+  }
+
+  // Helper: Authentication check wrapper
+  function checkAuthBeforeAction(actionFn) {
+    return (...args) => {
+      const isLoggedIn = !!localStorage.getItem('token');
+      const selectedMonth = document.getElementById('budgetMonth')?.value || '1';
+      const selectedYear = document.getElementById('budgetYear')?.value || new Date().getFullYear();
+      if (isLoggedIn) {
+        actionFn(true, selectedMonth, selectedYear);
+      } else {
+        const key = `guest_${selectedYear}_${selectedMonth}`;
+        const budget = getLocalStorageArray(key);
+        actionFn(false, selectedMonth, selectedYear, budget);
+        localStorage.setItem(key, JSON.stringify(budget));
+      }
+    };
+  }
+
+  // Tab navigation
+  function openTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+    const content = document.getElementById(`${tabName}Content`);
+    if (content) content.classList.add('active');
+    document.querySelectorAll('[role="tab"]').forEach(tab => {
+      tab.setAttribute('aria-selected', 'false');
+      tab.classList.remove('bg-gray-100', 'text-blue-600', 'border-b-2', 'border-blue-600');
+    });
+    const tab = document.getElementById(`${tabName}Tab`);
+    if (tab) {
+      tab.setAttribute('aria-selected', 'true');
+      tab.classList.add('bg-gray-100', 'text-blue-600', 'border-b-2', 'border-blue-600');
+    }
+    updateLists();
+  }
+
+  // Update category suggestions
+   function updateCategorySuggestions() {
+    const expenseSelect = document.getElementById('expenseCategory');
+    const savingsSelect = document.getElementById('savingsCategory');
+    if (expenseSelect) {
+      expenseSelect.innerHTML = '<option value="">Select Category</option>' + categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+    }
+    if (savingsSelect) {
+      savingsSelect.innerHTML = '<option value="">Select Category</option>' + savingsCategories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+    }
+  }
+
+  // Suggest category for expenses
+  function suggestCategory() {
+    const descInput = document.getElementById('expenseDescription');
+    const categoryInput = document.getElementById('expenseCategory');
+    if (!descInput || !categoryInput) return;
+    const description = descInput.value.toLowerCase();
+    const suggestions = {
+      'zomato': 'Entertainment', 'swiggy': 'Entertainment', 'netflix': 'Entertainment', 'hotstar': 'Entertainment',
+      'prime': 'Entertainment', 'bookmyshow': 'Entertainment', 'spotify': 'Entertainment', 'apple music': 'Entertainment',
+      'cinema': 'Entertainment', 'movie': 'Entertainment', 'pubg': 'Entertainment', 'game': 'Entertainment',
+      'diwali': 'Festivals', 'holi': 'Festivals', 'eid': 'Festivals', 'raksha bandhan': 'Festivals',
+      'gift': 'Festivals', 'rakhi': 'Festivals', 'christmas': 'Festivals',
+      'rent': 'Rent', 'society': 'Rent', 'maintenance': 'Rent',
+      'emi': 'EMIs', 'loan': 'EMIs', 'credit card': 'EMIs', 'bike emi': 'EMIs', 'car emi': 'EMIs',
+      'electricity': 'Utilities', 'power': 'Utilities', 'internet': 'Utilities',
+      'mobile': 'Utilities', 'phone bill': 'Utilities', 'water': 'Utilities', 'broadband': 'Utilities', 'wifi': 'Utilities',
+      'groceries': 'Groceries', 'supermarket': 'Groceries', 'bigbasket': 'Groceries', 'natures basket': 'Groceries',
+      'spencer': 'Groceries', 'fruit': 'Groceries', 'vegetable': 'Groceries', 'milk': 'Groceries',
+      'uber': 'Transportation', 'ola': 'Transportation', 'auto': 'Transportation',
+      'metro': 'Transportation', 'bus': 'Transportation', 'cab': 'Transportation', 'train': 'Transportation',
+      'petrol': 'Transportation', 'diesel': 'Transportation', 'fuel': 'Transportation', 'parking': 'Transportation', 'fastag': 'Transportation',
+      'medicine': 'Health Insurance', 'pharmacy': 'Health Insurance', 'apollo': 'Health Insurance',
+      'hospital': 'Health Insurance', 'doctor': 'Health Insurance', 'clinic': 'Health Insurance', 'insurance': 'Health Insurance',
+      'salon': 'Entertainment', 'parlour': 'Entertainment', 'spa': 'Entertainment', 'gym': 'Entertainment', 'fitness': 'Entertainment',
+      'haircut': 'Entertainment', 'beauty': 'Entertainment',
+      'amazon': 'Other', 'flipkart': 'Other', 'myntra': 'Other', 'tatacliq': 'Other',
+      'clothes': 'Other', 'shoes': 'Other', 'dress': 'Other', 'apparel': 'Other', 'footwear': 'Other',
+      'restaurant': 'Entertainment', 'dine': 'Entertainment', 'bar': 'Entertainment', 'lunch': 'Entertainment', 'dinner': 'Entertainment',
+      'pizza': 'Entertainment', 'burger': 'Entertainment', 'starbucks': 'Entertainment',
+      'college': 'Other', 'university': 'Other', 'school': 'Other', 'tuition': 'Other', 'fees': 'Other', 'course': 'Other', 'coaching': 'Other',
+      'phonepe': 'Other', 'google pay': 'Other', 'gpay': 'Other', 'paytm': 'Other', 'yatra': 'Travel', 'make my trip': 'Travel', 'goibibo': 'Travel',
+      'swiggy instamart': 'Groceries', 'travel': 'Travel', 'flight': 'Travel', 'air india': 'Travel', 'indigo': 'Travel',
+      'bus ticket': 'Travel', 'hotel': 'Travel', 'booking.com': 'Travel', 'trip': 'Travel',
+      'misc': 'Other', 'uncategorized': 'Other', 'cash': 'Other', 'withdrawal': 'Other'
+    };
+    let found = false;
+    for (const [keyword, category] of Object.entries(suggestions)) {
+      if (description.includes(keyword)) {
+        categoryInput.value = category;
+        found = true;
+        break;
+      }
+    }
+    if (!found) categoryInput.value = 'Other';
+  }
+
+  // Suggest category for savings
+  function suggestCategory_sav() {
+    const descInput = document.getElementById('savingsDescription');
+    const categoryInput = document.getElementById('savingsCategory');
+    if (!descInput || !categoryInput) return;
+    const description = descInput.value.toLowerCase();
+    const suggestions = {
+      'sip': 'MF', 'rd': 'RD', 'mf': 'MF', 'fd': 'FD', 'ppf': 'PPF',
+      'stock': 'Stock', 'mutual fund': 'MF', 'groww': 'Stock', 'zerodha': 'Stock', 'stocks': 'Stock',
+      'lic': 'Life Insurance', 'life insurance': 'Life Insurance', 'term insurance': 'Life Insurance', 'ulip': 'ULIP',
+      'gold': 'COMMODITY', 'silver': 'COMMODITY'
+    };
+    let found = false;
+    for (const [keyword, category] of Object.entries(suggestions)) {
+      if (description.includes(keyword)) {
+        categoryInput.value = category;
+        found = true;
+        break;
+      }
+    }
+    if (!found) categoryInput.value = 'Other';
+  }
+
+  // Save data
+  function saveData() {
+    const selectedMonth = document.getElementById('budgetMonth')?.value || '1';
+    const selectedYear = document.getElementById('budgetYear')?.value || new Date().getFullYear();
+    const key = currentUser ? `user_${currentUser}_${selectedYear}_${selectedMonth}` : `guest_${selectedYear}_${selectedMonth}`;
+    const data = { incomes, expenses, savings };
+    if (currentUser) {
+      fetchWithTimeout(`${BASE_URL}/api/budget`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ userId: localStorage.getItem('userId'), ...data, month: selectedMonth, year: selectedYear })
+      }).catch(error => console.error('Error saving data:', error));
+    } else {
+      localStorage.setItem(key, JSON.stringify(data));
+    }
+    saveGoals();
+  }
+
+  // Save goals
+  function saveGoals() {
+    const key = currentUser ? `user_${currentUser}_goals` : 'guest_goals';
+    localStorage.setItem(key, JSON.stringify(goals));
+  }
+
+  // Load goals
+  function loadGoals() {
+    const key = currentUser ? `user_${currentUser}_goals` : 'guest_goals';
+    goals = getLocalStorageArray(key);
+  }
+
+  // Returns an array of the last 6 month labels, e.g. ['Feb','Mar',…,'Jul']
+  function getLastSixMonthLabels(selectedYear, selectedMonth) {
+    const labels = [];
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    let ym = selectedYear * 12 + (selectedMonth - 1);
+    for (let i = 5; i >= 0; i--) {
+      const m = ym - i;
+      const y = Math.floor(m / 12);
+      const mo = m % 12;
+      labels.push(months[mo]);
+    }
+    return labels;
+  }
+ function debounce(func, delay) {
+  let timeout;
+  return function() {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, arguments), delay);
+  };
+}
+  // Example: gather Needs totals for each of the last 6 months
+ function getNeedsTrend(selectedYear, selectedMonth, allExpenses) {
+  const trend = Array(6).fill(0);
+  const base = selectedYear * 12 + (selectedMonth - 1);
+  const needsCats = ['Rent', 'EMIs', 'Utilities', 'Health Insurance', 'Transportation', 'Groceries'];
+  allExpenses.forEach(({ date, category, amount }) => {
+    if (!needsCats.includes(category)) return;
+    const parsedDate = new Date(date);
+    const idx = base - (parsedDate.getFullYear() * 12 + parsedDate.getMonth());
+    if (idx >= 0 && idx < 6) trend[5 - idx] += amount;
+  });
+  return trend;
+}
+
+ // Update getWantsTrend (use actual categories)
+function getWantsTrend(selectedYear, selectedMonth, allExpenses) {
+  const trend = Array(6).fill(0);
+  const base = selectedYear * 12 + (selectedMonth - 1);
+  const wantsCats = ['Entertainment', 'Festivals', 'Travel'];
+  allExpenses.forEach(({ date, category, amount }) => {
+    if (!wantsCats.includes(category)) return;
+    const parsedDate = new Date(date);
+    const idx = base - (parsedDate.getFullYear() * 12 + parsedDate.getMonth());
+    if (idx >= 0 && idx < 6) trend[5 - idx] += amount;
+  });
+  return trend;
+}
+  // Update getSavingsTrend (sum all savings, no category filter)
+function getSavingsTrend(selectedYear, selectedMonth, allSavings) {
+  const trend = Array(6).fill(0);
+  const base = selectedYear * 12 + (selectedMonth - 1);
+  allSavings.forEach(({ date, amount }) => {
+    const parsedDate = new Date(date);
+    const idx = base - (parsedDate.getFullYear() * 12 + parsedDate.getMonth());
+    if (idx >= 0 && idx < 6) trend[5 - idx] += amount;
+  });
+  return trend;
+}
+  // Load budget data
+  async function loadBudgetData() {
+    const selectedMonth = document.getElementById('budgetMonth')?.value || '1';
+    const selectedYear = document.getElementById('budgetYear')?.value || new Date().getFullYear();
+    if (currentUser) {
+      fetchWithTimeout(`${BASE_URL}/api/budget?userId=${localStorage.getItem('userId')}&month=${selectedMonth}&year=${selectedYear}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      })
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return response.json();
+        })
+        .then(data => {
+          incomes = data.incomes || [];
+          expenses = data.expenses || [];
+          savings = data.savings || [];
+          saveData();
+          updateDashboard();
+        })
+        .catch(error => {
+          console.error('Error loading budget:', error);
+          showError('dashboard', 'Failed to load budget data.');
+        });
+      // Load goals separately
+      fetchWithTimeout(`${BASE_URL}/api/goals?userId=${localStorage.getItem('userId')}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      })
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return response.json();
+        })
+        .then(data => {
+          goals = data || [];
+          updateDashboard();
+        })
+        .catch(error => console.error('Error loading goals:', error));
+    } else {
+      const key = `guest_${selectedYear}_${selectedMonth}`;
+      const data = getLocalStorageArray(key);
+      incomes = data.incomes || [];
+      expenses = data.expenses || [];
+      savings = data.savings || [];
+      loadGoals();
+      updateDashboard();
+
+    }
+    await loadAllExpensesForYear(selectedYear);
+    await loadAllSavingsForYear(selectedYear);
+    console.log('All Savings Loaded:', allSavings);  // Check raw data here
+    if (allSavings.length > 0) {
+    console.warn('Unexpected savings data found:', allSavings);}
+    updateDashboard();
+    // Build labels + raw data
+    const labels = getLastSixMonthLabels(selectedYear, selectedMonth);
+    const needsTrendArray = getNeedsTrend(selectedYear, selectedMonth, allExpenses);
+    const wantsTrendArray = getWantsTrend(selectedYear, selectedMonth, allExpenses);
+    const savingsTrendArray = getSavingsTrend(selectedYear, selectedMonth, allSavings);
+    // Render the 6‑mo sparklines
+    renderCategoryTrends(labels, needsTrendArray, wantsTrendArray, savingsTrendArray);
+    // Compute MoM totals
+    const currentTotals = {
+      needs: needsTrendArray[5],
+      wants: wantsTrendArray[5],
+      savings: savingsTrendArray[5]
+    };
+    const previousTotals = {
+      needs: needsTrendArray[4],
+      wants: wantsTrendArray[4],
+      savings: savingsTrendArray[4]
+    };
+    // And finally, draw the bar chart
+    renderMoMComparison(currentTotals, previousTotals);
+    console.log('Savings Trend Data:', savingsTrendArray);
+  }
+
+  async function loadAllExpensesForYear(selectedYear) {
+    allExpenses = [];
+    if (currentUser) {
+      const promises = Array.from({length: 12}, (_, i) => i + 1).map(m =>
+        fetchWithTimeout(`${BASE_URL}/api/budget?userId=${localStorage.getItem('userId')}&month=${m}&year=${selectedYear}`, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        })
+        .then(response => {
+          if (!response.ok) return [];
+          return response.json().then(data => data.expenses || []);
+        })
+        .catch(() => [])
+      );
+      const results = await Promise.all(promises);
+      allExpenses = results.flat();
+    } else {
+      for (let m = 1; m <= 12; m++) {
+        const key = `guest_${selectedYear}_${m}`;
+        const data = getLocalStorageArray(key);
+        allExpenses.push(...(data.expenses || []));
+      }
+    }
+  }
+  async function loadAllSavingsForYear(selectedYear) {
+  allSavings = [];
+  if (currentUser) {
+    const promises = Array.from({length: 12}, (_, i) => i + 1).map(m =>
+      fetchWithTimeout(`${BASE_URL}/api/budget?userId=${localStorage.getItem('userId')}&month=${m}&year=${selectedYear}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+      })
+      .then(response => {
+        if (!response.ok) return [];
+        return response.json().then(data => data.savings || []);
+      })
+      .catch(() => [])
+    );
+    const results = await Promise.all(promises);
+    allSavings = results.flat();
+  } else {
+    for (let m = 1; m <= 12; m++) {
+      const key = `guest_${selectedYear}_${m}`;
+      const data = getLocalStorageArray(key);
+      allSavings.push(...(data.savings || []));
+    }
+  }
+}
+
+  function renderCategoryTrends(labels, needsData, wantsData, savingsData) {
+  const sparkConfig = (ctx, data, label, borderColor) => {
+    return new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{ data, label, fill: false, borderColor, borderWidth: 2, tension: 0.3, pointRadius: 0 }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { x: { display: false }, y: { display: false } },
+        plugins: { legend: { display: false }, tooltip: { enabled: true } }
+      }
+    });
+  };
+  if (needsTrendChartInstance) needsTrendChartInstance.destroy();
+  needsTrendChartInstance = sparkConfig(document.getElementById('needsTrendChart'), needsData, 'Needs', '#3b82f6');
+  
+  if (wantsTrendChartInstance) wantsTrendChartInstance.destroy();
+  wantsTrendChartInstance = sparkConfig(document.getElementById('wantsTrendChart'), wantsData, 'Wants', '#f59e0b');
+  
+  if (savingsTrendChartInstance) savingsTrendChartInstance.destroy();
+  savingsTrendChartInstance = sparkConfig(document.getElementById('savingsTrendChart'), savingsData, 'Savings', '#10b981');
+}
+
+// Update renderMoMComparison (to be safe, though not currently erroring)
+function renderMoMComparison(current, previous) {
+  if (momComparisonChartInstance) momComparisonChartInstance.destroy();
+  momComparisonChartInstance = new Chart(document.getElementById('momComparisonChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Needs', 'Wants', 'Savings'],
+      datasets: [
+        { label: 'Last Month', data: [previous.needs, previous.wants, previous.savings], backgroundColor: '#cbd5e1' },
+        { label: 'This Month', data: [current.needs, current.wants, current.savings], backgroundColor: '#3b82f6' }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,  // NEW: Prevent auto-scaling issues
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: '₹ Amount' } }
+      },
+      plugins: { legend: { position: 'top' }, tooltip: { mode: 'index' } }
+    }
+  });
+}
+
+  // Add income
+  function addIncome(isLoggedIn, month, year, budget = {}) {
+    const form = document.getElementById('incomeForm');
+    if (!form) {
+      console.warn('incomeForm not found');
+      return;
+    }
+    const formData = new FormData(form);
+    const source = formData.get('source').trim();
+    const amount = parseFloat(formData.get('amount'));
+    const frequency = formData.get('frequency');
+    if (!source || isNaN(amount) || amount <= 0) {
+      showError('income', 'Please enter a valid source and amount.');
+      return;
+    }
+    const id = window.editingIncomeId || `income_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const income = { id, source, amount, frequency, date: new Date(year, month - 1, 1).toISOString() };
+    if (window.editingIncomeId) {
+      const idx = incomes.findIndex(inc => inc.id === window.editingIncomeId);
+      if (idx !== -1) incomes[idx] = income;
+      window.editingIncomeId = null;
+      const addIncomeBtn = document.getElementById('addIncomeBtn');
+      if (addIncomeBtn) addIncomeBtn.textContent = 'Add Income';
+    } else {
+      incomes.push(income);
+    }
+    if (isLoggedIn) {
+      fetchWithTimeout(`${BASE_URL}/api/income`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ ...income, userId: localStorage.getItem('userId'), month, year })
+      })
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          showSuccess('income', 'Income added successfully!');
+          form.reset();
+          saveData();
+          updateDashboard();
+        })
+        .catch(error => {
+          console.error('Error adding income:', error);
+          if (error.message.includes('401')) {
+            showError('income', 'Session expired or unauthorized. Please log in again.');
+          } else if (error.message.includes('fetch')) {
+            showError('income', 'Failed to connect to server.');
+          } else {
+            showError('income', 'Failed to add income.');
+          }
+        });
+    } else {
+      budget.incomes = budget.incomes || [];
+      if (window.editingIncomeId) {
+        const idx = budget.incomes.findIndex(inc => inc.id === window.editingIncomeId);
+        if (idx !== -1) budget.incomes[idx] = income;
+      } else {
+        budget.incomes.push(income);
+      }
+      incomes = budget.incomes;
+      saveData();
+      showSuccess('income', 'Income added successfully!');
+      form.reset();
+      updateDashboard();
+    }
+  }
+
+  // Add expense
+  function addExpense(isLoggedIn, month, year, budget = {}) {
+    const form = document.getElementById('expenseForm');
+    if (!form) {
+      console.warn('expenseForm not found');
+      return;
+    }
+    const formData = new FormData(form);
+    const description = formData.get('description').trim();
+    const amount = parseFloat(formData.get('amount'));
+    const category = formData.get('category');
+    if (!description || isNaN(amount) || amount <= 0 || !category) {
+      showError('expense', 'Please enter a valid description, amount, and category.');
+      return;
+    }
+    const id = window.editingExpenseId || `expense_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const expense = { id, description, amount, category, date: new Date(year, month - 1, 1).toISOString() };
+    if (window.editingExpenseId) {
+      const idx = expenses.findIndex(exp => exp.id === window.editingExpenseId);
+      if (idx !== -1) expenses[idx] = expense;
+      window.editingExpenseId = null;
+      const addExpenseBtn = document.getElementById('addExpenseBtn');
+      if (addExpenseBtn) addExpenseBtn.textContent = 'Add Expense';
+    } else {
+      expenses.push(expense);
+    }
+    if (isLoggedIn) {
+      fetchWithTimeout(`${BASE_URL}/api/expense`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ ...expense, userId: localStorage.getItem('userId'), month, year })
+      })
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          showSuccess('expense', 'Expense added successfully!');
+          form.reset();
+          saveData();
+          updateDashboard();
+        })
+        .catch(error => {
+          console.error('Error adding expense:', error);
+          showError('expense', error.message.includes('fetch') ? 'Failed to connect to server.' : 'Failed to add expense.');
+        });
+    } else {
+      budget.expenses = budget.expenses || [];
+      if (window.editingExpenseId) {
+        const idx = budget.expenses.findIndex(exp => exp.id === window.editingExpenseId);
+        if (idx !== -1) budget.expenses[idx] = expense;
+      } else {
+        budget.expenses.push(expense);
+      }
+      expenses = budget.expenses;
+      saveData();
+      showSuccess('expense', 'Expense added successfully!');
+      form.reset();
+      updateDashboard();
+    }
+  }
+
+  // Add savings
+  function addSavings(isLoggedIn, month, year, budget = {}) {
+    const form = document.getElementById('savingsForm');
+    if (!form) {
+      console.warn('savingsForm not found');
+      return;
+    }
+    const formData = new FormData(form);
+    const description = formData.get('description').trim();
+    const amount = parseFloat(formData.get('amount'));
+    const category = formData.get('category');
+    if (!description || isNaN(amount) || amount <= 0 || !category) {
+      showError('savings', 'Please enter a valid description, amount, and category.');
+      return;
+    }
+    const id = window.editingSavingsId || `savings_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const saving = { id, description, amount, category, date: new Date(year, month - 1, 1).toISOString() };
+    if (window.editingSavingsId) {
+      const idx = savings.findIndex(sav => sav.id === window.editingSavingsId);
+      if (idx !== -1) savings[idx] = saving;
+      window.editingSavingsId = null;
+      const addSavingsBtn = document.getElementById('addSavingsBtn');
+      if (addSavingsBtn) addSavingsBtn.textContent = 'Add Savings/Investment';
+    } else {
+      savings.push(saving);
+    }
+    if (isLoggedIn) {
+      fetchWithTimeout(`${BASE_URL}/api/savings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ ...saving, userId: localStorage.getItem('userId'), month, year })
+      })
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          showSuccess('savings', 'Savings added successfully!');
+          form.reset();
+          saveData();
+          updateDashboard();
+        })
+        .catch(error => {
+          console.error('Error adding savings:', error);
+          showError('savings', error.message.includes('fetch') ? 'Failed to connect to server.' : 'Failed to add savings.');
+        });
+    } else {
+      budget.savings = budget.savings || [];
+      if (window.editingSavingsId) {
+        const idx = budget.savings.findIndex(sav => sav.id === window.editingSavingsId);
+        if (idx !== -1) budget.savings[idx] = saving;
+      } else {
+        budget.savings.push(saving);
+      }
+      savings = budget.savings;
+      saveData();
+      showSuccess('savings', 'Savings added successfully!');
+      form.reset();
+      updateDashboard();
+    }
+  }
+
+  // Add goal
+  function addGoal() {
+    console.log('Entering addGoal');
+    const form = document.getElementById('goalForm');
+    if (!form) {
+      console.warn('goalForm not found in addGoal');
+      return;
+    }
+    const formData = new FormData(form);
+    const description = formData.get('description').trim();
+    const amount = parseFloat(formData.get('amount'));
+    const date = formData.get('date');
+    const type = formData.get('type');
+    const saved = parseFloat(formData.get('saved')) || 0;
+    const selectedMonth = document.getElementById('budgetMonth')?.value || '1';
+    const selectedYear = document.getElementById('budgetYear')?.value || new Date().getFullYear();
+    console.log('Form data:', { description, amount, date, type, saved, selectedMonth, selectedYear });
+    if (!description || isNaN(amount) || amount <= 0 || !date) {
+      console.warn('Validation failed:', { description, amount, date });
+      showError('goal', 'Please enter a valid description, amount, and date.');
+      return;
+    }
+    const id = window.editingGoalId || `goal_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const monthsLeft = Math.max(1, Math.round((new Date(date) - new Date()) / (1000 * 60 * 60 * 24 * 30)));
+    const goal = { id, description, amount, date, type, saved, monthlyTarget: (amount - saved) / monthsLeft };
+    console.log('New goal:', goal);
+    if (window.editingGoalId) {
+      console.log('Editing goal with id:', window.editingGoalId);
+      const idx = goals.findIndex(g => g.id === window.editingGoalId);
+      if (idx !== -1) {
+        goals[idx] = goal;
+        console.log('Goal updated at index:', idx);
+      } else {
+        console.warn('Goal not found for editing:', window.editingGoalId);
+      }
+      window.editingGoalId = null;
+      const addGoalBtn = document.getElementById('addGoalBtn');
+      if (addGoalBtn) addGoalBtn.textContent = '+ Add Savings Goal';
+    } else {
+      if (goals.some(g => g.id === id)) {
+        console.warn('Duplicate goal id:', id);
+        showError('goal', 'A goal with this ID already exists.');
+        return;
+      }
+      goals.push(goal);
+      console.log('Goal added to goals array:', goals);
+    }
+    if (currentUser) {
+      console.log('Saving goal to backend for user:', currentUser);
+      const method = window.editingGoalId ? 'PUT' : 'POST';
+      const url = window.editingGoalId ? `${BASE_URL}/api/goals/${window.editingGoalId}` : `${BASE_URL}/api/goals`;
+      fetchWithTimeout(url, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ ...goal, userId: localStorage.getItem('userId') })
+      })
+        .then(response => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          console.log('Goal saved to backend successfully');
+          showSuccess('goal', 'Goal added successfully!');
+          form.reset();
+          saveGoals();
+          updateDashboard();
+          closeModal('goalModal');
+        })
+        .catch(error => {
+          console.error('Error saving goal to backend:', error);
+          showError('goal', error.message.includes('fetch') ? 'Failed to connect to server.' : 'Failed to add goal.');
+        });
+    } else {
+      console.log('Saving goal to localStorage (guest mode)');
+      saveGoals();
+      showSuccess('goal', 'Goal added successfully!');
+      form.reset();
+      updateDashboard();
+      closeModal('goalModal');
+    }
+  }
+
+  // Edit and delete functions
+  function editIncome(id) {
+    const income = incomes.find(inc => inc.id === id);
+    if (income) {
+      const form = document.getElementById('incomeForm');
+      if (form) {
+        form.source.value = income.source;
+        form.amount.value = income.amount;
+        form.frequency.value = income.frequency;
+        window.editingIncomeId = id;
+        const addIncomeBtn = document.getElementById('addIncomeBtn');
+        if (addIncomeBtn) addIncomeBtn.textContent = 'Update Income';
+      }
+    }
+  }
+
+  function deleteIncome(id) {
+    if (confirm('Do you want to delete this income?')) {
+      incomes = incomes.filter(inc => inc.id !== id);
+      saveData();
+      updateDashboard();
+    }
+  }
+
+  function editExpense(id) {
+    const expense = expenses.find(exp => exp.id === id);
+    if (expense) {
+      const form = document.getElementById('expenseForm');
+      if (form) {
+        form.description.value = expense.description;
+        form.amount.value = expense.amount;
+        form.category.value = expense.category;
+        window.editingExpenseId = id;
+        const addExpenseBtn = document.getElementById('addExpenseBtn');
+        if (addExpenseBtn) addExpenseBtn.textContent = 'Update Expense';
+      }
+    }
+  }
+
+  function deleteExpense(id) {
+    if (confirm('Do you want to delete this expense?')) {
+      expenses = expenses.filter(exp => exp.id !== id);
+      saveData();
+      updateDashboard();
+    }
+  }
+
+  function editSavings(id) {
+    const saving = savings.find(sav => sav.id === id);
+    if (saving) {
+      const form = document.getElementById('savingsForm');
+      if (form) {
+        form.description.value = saving.description;
+        form.amount.value = saving.amount;
+        form.category.value = saving.category;
+        window.editingSavingsId = id;
+        const addSavingsBtn = document.getElementById('addSavingsBtn');
+        if (addSavingsBtn) addSavingsBtn.textContent = 'Update Savings';
+      }
+    }
+  }
+
+  function deleteSavings(id) {
+    if (confirm('Do you want to delete this savings entry?')) {
+      savings = savings.filter(sav => sav.id !== id);
+      saveData();
+      updateDashboard();
+    }
+  }
+
+  function editGoal(id) {
+    const goal = goals.find(g => g.id === id);
+    if (goal) {
+      const form = document.getElementById('goalForm');
+      if (form) {
+        form.description.value = goal.description;
+        form.amount.value = goal.amount;
+        form.date.value = goal.date;
+        form.type.value = goal.type;
+        form.saved.value = goal.saved;
+        window.editingGoalId = id;
+        const addGoalBtn = document.getElementById('addGoalBtn');
+        if (addGoalBtn) addGoalBtn.textContent = 'Update';
+        openModal('goalModal');
+      }
+    }
+  }
+
+  function deleteGoal(id) {
+    if (confirm('Do you want to delete this goal?')) {
+      goals = goals.filter(goal => goal.id !== id);
+      if (currentUser) {
+        fetchWithTimeout(`${BASE_URL}/api/goals/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        })
+          .then(response => {
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            saveGoals();
+            updateDashboard();
+          })
+          .catch(error => console.error('Error deleting goal:', error));
+      } else {
+        saveGoals();
+        updateDashboard();
+      }
+    }
+  }
+
+  // Calculate 50/30/20 budget
+  function calculate50_30_20() {
+    const totalIncome = incomes.reduce((sum, inc) => sum + (inc.amount / (inc.frequency === 'monthly' ? 1 : 12)), 0);
+    return {
+      needs: totalIncome * 0.5,
+      wants: totalIncome * 0.3,
+      savings: totalIncome * 0.2
+    };
+  }
+
+  // Update dashboard
+  function updateDashboard() {
+    const selectedMonth = document.getElementById('budgetMonth')?.value || '1';
+    const selectedYear = document.getElementById('budgetYear')?.value || new Date().getFullYear();
+    const filteredIncomes = incomes.filter(inc => {
+      const date = new Date(inc.date);
+      return date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear);
+    });
+    const filteredExpenses = expenses.filter(exp => {
+      const date = new Date(exp.date);
+      return date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear);
+    });
+    const filteredSavings = savings.filter(sav => {
+      const date = new Date(sav.date);
+      return date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear);
+    });
+    const totalIncome = filteredIncomes.reduce((sum, inc) => sum + (inc.amount / (inc.frequency === 'monthly' ? 1 : 12)), 0);
+    const totalExpenses = filteredExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+    const needsCats = ['Rent', 'EMIs', 'Utilities', 'Health Insurance', 'Transportation', 'Groceries'];
+    const wantsCats = ['Entertainment', 'Festivals', 'Travel'];
+    const budget = calculate50_30_20();
+    const needsSpent = filteredExpenses.filter(exp => needsCats.includes(exp.category)).reduce((sum, exp) => sum + exp.amount, 0);
+    const wantsSpent = filteredExpenses.filter(exp => wantsCats.includes(exp.category)).reduce((sum, exp) => sum + exp.amount, 0);
+    const savingsSpent = filteredSavings.reduce((sum, s) => sum + s.amount, 0);
+    const totalIncomeEl = document.getElementById('totalIncome');
+    if (totalIncomeEl) totalIncomeEl.textContent = totalIncome.toFixed(2);
+    const totalExpensesEl = document.getElementById('totalExpenses');
+    if (totalExpensesEl) totalExpensesEl.textContent = totalExpenses.toFixed(2);
+    const netBalanceEl = document.getElementById('netBalance');
+    if (netBalanceEl) netBalanceEl.textContent = (totalIncome - totalExpenses).toFixed(2);
+    const needsBudgetEl = document.getElementById('needsBudget');
+    if (needsBudgetEl) needsBudgetEl.textContent = `${budget.needs.toFixed(2)}`;
+    const wantsBudgetEl = document.getElementById('wantsBudget');
+    if (wantsBudgetEl) wantsBudgetEl.textContent = `${budget.wants.toFixed(2)}`;
+    const savingsBudgetEl = document.getElementById('savingsBudget');
+    if (savingsBudgetEl) savingsBudgetEl.textContent = `${budget.savings.toFixed(2)}`;
+    const needsSpentEl = document.getElementById('needsSpent');
+    if (needsSpentEl) needsSpentEl.textContent = needsSpent.toFixed(2);
+    const wantsSpentEl = document.getElementById('wantsSpent');
+    if (wantsSpentEl) wantsSpentEl.textContent = wantsSpent.toFixed(2);
+    const savingsSpentEl = document.getElementById('savingsSpent');
+    if (savingsSpentEl) savingsSpentEl.textContent = savingsSpent.toFixed(2);
+    const needsStatusEl = document.getElementById('needsStatus');
+    if (needsStatusEl) {
+      needsStatusEl.textContent = needsSpent > budget.needs ? '(Over budget!)' : '(On track)';
+      needsStatusEl.className = needsSpent > budget.needs ? 'text-red-600 font-semibold' : 'text-green-600 font-semibold';
+    }
+    const wantsStatusEl = document.getElementById('wantsStatus');
+    if (wantsStatusEl) {
+      wantsStatusEl.textContent = wantsSpent > budget.wants ? '(Over budget!)' : '(On track)';
+      wantsStatusEl.className = wantsSpent > budget.wants ? 'text-red-600 font-semibold' : 'text-green-600 font-semibold';
+    }
+    const savingsStatusEl = document.getElementById('savingsStatus');
+    if (savingsStatusEl) {
+      savingsStatusEl.textContent = savingsSpent < budget.savings ? '(Boost savings!)' : '(Great job!)';
+      savingsStatusEl.className = savingsSpent < budget.savings ? 'text-red-600 font-semibold' : 'text-green-600 font-semibold';
+    }
+    const needsProgressEl = document.getElementById('needsProgress');
+    if (needsProgressEl) needsProgressEl.style.width = `${Math.min((needsSpent / budget.needs) * 100, 100)}%`;
+    const wantsProgressEl = document.getElementById('wantsProgress');
+    if (wantsProgressEl) wantsProgressEl.style.width = `${Math.min((wantsSpent / budget.wants) * 100, 100)}%`;
+    const savingsProgressEl = document.getElementById('savingsProgress');
+    if (savingsProgressEl) savingsProgressEl.style.width = `${Math.min((savingsSpent / budget.savings) * 100, 100)}%`;
+    updateCharts();
+    updateGoals();
+    updateLists();
+    generateRecommendations();
+  }
+
+  // Update lists
+  function updateLists() {
+    const selectedMonth = document.getElementById('budgetMonth')?.value || '1';
+    const selectedYear = document.getElementById('budgetYear')?.value || new Date().getFullYear();
+    const incomeList = document.getElementById('incomeList');
+    if (incomeList) {
+      incomeList.innerHTML = '';
+      incomes.filter(inc => {
+        const date = new Date(inc.date);
+        return date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear);
+      }).forEach(inc => {
+        const div = document.createElement('div');
+        div.className = 'mb-2 p-2 bg-gray-50 rounded-lg';
+        div.innerHTML = `
+          <p class="font-semibold">${inc.source} (${inc.frequency}): ₹${inc.amount.toFixed(2)}</p>
+        `;
+        const editBtn = document.createElement('button');
+        editBtn.className = 'inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded mr-2 text-xs';
+        editBtn.textContent = 'Edit';
+        editBtn.addEventListener('click', () => editIncome(inc.id));
+        div.appendChild(editBtn);
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'inline-block px-3 py-1 bg-red-100 text-red-800 rounded text-xs';
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.addEventListener('click', () => deleteIncome(inc.id));
+        div.appendChild(deleteBtn);
+        incomeList.appendChild(div);
+      });
+    }
+    const expenseList = document.getElementById('expenseList');
+    if (expenseList) {
+      expenseList.innerHTML = '';
+      expenses.filter(exp => {
+        const date = new Date(exp.date);
+        return date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear);
+      }).forEach(exp => {
+        const div = document.createElement('div');
+        div.className = 'mb-2 p-2 bg-gray-50 rounded-lg';
+        div.innerHTML = `
+          <p class="font-semibold">${exp.description} [${exp.category}]: ₹${exp.amount.toFixed(2)}</p>
+        `;
+        const editBtn = document.createElement('button');
+        editBtn.className = 'inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded mr-2 text-xs';
+        editBtn.textContent = 'Edit';
+        editBtn.addEventListener('click', () => editExpense(exp.id));
+        div.appendChild(editBtn);
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'inline-block px-3 py-1 bg-red-100 text-red-800 rounded text-xs';
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.addEventListener('click', () => deleteExpense(exp.id));
+        div.appendChild(deleteBtn);
+        expenseList.appendChild(div);
+      });
+    }
+    const savingsList = document.getElementById('savingsList');
+    if (savingsList) {
+      savingsList.innerHTML = '';
+      savings.filter(sav => {
+        const date = new Date(sav.date);
+        return date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear);
+      }).forEach(sav => {
+        const div = document.createElement('div');
+        div.className = 'mb-2 p-2 bg-gray-50 rounded-lg';
+        div.innerHTML = `
+          <p class="font-semibold">${sav.description} [${sav.category}]: ₹${sav.amount.toFixed(2)}</p>
+        `;
+        const editBtn = document.createElement('button');
+        editBtn.className = 'inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded mr-2 text-xs';
+        editBtn.textContent = 'Edit';
+        editBtn.addEventListener('click', () => editSavings(sav.id));
+        div.appendChild(editBtn);
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'inline-block px-3 py-1 bg-red-100 text-red-800 rounded text-xs';
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.addEventListener('click', () => deleteSavings(sav.id));
+        div.appendChild(deleteBtn);
+        savingsList.appendChild(div);
+      });
+    }
+  }
+
+  function updateGoals() {
+    const goalList = document.getElementById('goalList');
+    if (goalList) {
+      goalList.innerHTML = '';
+      goals.forEach(goal => {
+        const div = document.createElement('div');
+        div.className = 'p-4 bg-gray-50 rounded-lg mb-4 shadow sortable-item';
+        div.innerHTML = `
+          <p class="font-semibold">${goal.description} (${goal.type}): ₹${goal.amount.toFixed(2)}</p>
+          <p>Saved: ₹${goal.saved.toFixed(2)} | Deadline: ${new Date(goal.date).toLocaleDateString()}</p>
+          <p>Monthly Target: ₹${goal.monthlyTarget.toFixed(2)}</p>
+          <div class="progress-bar mt-2"><div class="progress" style="width: ${Math.min((goal.saved / goal.amount) * 100, 100)}%"></div></div>
+        `;
+        const editBtn = document.createElement('button');
+        editBtn.className = 'inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded mr-2 text-xs';
+        editBtn.textContent = 'Edit';
+        editBtn.addEventListener('click', () => editGoal(goal.id));
+        div.appendChild(editBtn);
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'inline-block px-3 py-1 bg-red-100 text-red-800 rounded text-xs';
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.addEventListener('click', () => deleteGoal(goal.id));
+        div.appendChild(deleteBtn);
+        goalList.appendChild(div);
+      });
+      // Enable drag-and-drop sorting if SortableJS is loaded
+      if (window.Sortable) {
+        new Sortable(goalList, {
+          animation: 150,
+          ghostClass: 'sortable-chosen',
+          onEnd: (evt) => {
+            const oldIndex = evt.oldIndex;
+            const newIndex = evt.newIndex;
+            const moved = goals.splice(oldIndex, 1)[0];
+            goals.splice(newIndex, 0, moved);
+            saveGoals();
+            updateGoals(); // Re-render after reorder
+          }
+        });
+      }
+    }
+  }
+
+  // Update charts
+  function updateCharts() {
+    const filter = document.getElementById('expenseFilter')?.value || 'all';
+    const selectedMonth = document.getElementById('budgetMonth')?.value || '1';
+    const selectedYear = document.getElementById('budgetYear')?.value || new Date().getFullYear();
+    const filteredExpenses = expenses.filter(exp => {
+      const date = new Date(exp.date);
+      return date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear);
+    }).filter(exp =>
+      filter === 'all' ? true :
+      filter === 'fixed' ? ['Rent', 'EMIs', 'Health Insurance'].includes(exp.category) :
+      filter === 'variable' ? ['Groceries', 'Transport', 'Utilities', 'Food'].includes(exp.category) :
+      ['Festivals', 'Travel', 'Entertainment'].includes(exp.category)
+    );
+    const pieData = categories.map(cat =>
+      filteredExpenses.filter(exp => exp.category === cat).reduce((sum, exp) => sum + exp.amount, 0)
+    );
+    // Bar chart using allExpenses for the year
+    const trendExpenses = allExpenses.filter(exp =>
+      filter === 'all' ? true :
+      filter === 'fixed' ? ['Rent', 'EMIs', 'Health Insurance'].includes(exp.category) :
+      filter === 'variable' ? ['Groceries', 'Transport', 'Utilities', 'Food'].includes(exp.category) :
+      ['Festivals', 'Travel', 'Entertainment'].includes(exp.category)
+    );
+    const barData = Array(12).fill(0);
+    trendExpenses.forEach(exp => {
+      const m = new Date(exp.date).getMonth();
+      barData[m] += exp.amount;
+    });
+    const labels = Array.from({length: 12}, (_, i) => new Date(selectedYear, i).toLocaleString('default', { month: 'short' }));
+    if (pieChart) pieChart.destroy();
+    const pieCanvas = document.getElementById('spendingPieChart');
+    if (pieCanvas && window.Chart) {
+      pieChart = new Chart(pieCanvas, {
+        type: 'pie',
+        data: {
+          labels: categories,
+          datasets: [{
+            data: pieData,
+            backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff', '#ff9f40', '#c9cbcf', '#36a2eb', '#ff6384', '#4bc0c0'],
+            borderColor: ['#ffffff'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'top' }, title: { display: true, text: 'Spending by Category' } }
+        }
+      });
+    } else {
+      console.warn('spendingPieChart or Chart.js not found');
+    }
+    if (barChart) barChart.destroy();
+    const barCanvas = document.getElementById('spendingBarChart');
+    if (barCanvas && window.Chart) {
+      barChart = new Chart(barCanvas, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Monthly Spending',
+            data: barData,
+            backgroundColor: '#36a2eb',
+            borderColor: '#ffffff',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: { y: { beginAtZero: true, title: { display: true, text: 'Amount (₹)' } } },
+          plugins: { title: { display: true, text: 'Monthly Spending Trends' } }
+        }
+      });
+    } else {
+      console.warn('spendingBarChart or Chart.js not found');
+    }
+  }
+
+  // Generate recommendations
+  function generateRecommendations() {
+    console.log('generateRecommendations called');
+    const selectedMonth = document.getElementById('budgetMonth')?.value || '1';
+    const selectedYear = document.getElementById('budgetYear')?.value || new Date().getFullYear();
+    const filteredExpenses = expenses.filter(exp => {
+        const date = new Date(exp.date);
+        return date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear);
+    });
+    const filteredSavings = savings.filter(sav => {
+        const date = new Date(sav.date);
+        return date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear);
+    });
+    const budget = calculate50_30_20();
+    const needsCats = ['Rent', 'EMIs', 'Utilities', 'Health Insurance', 'Transportation', 'Groceries'];
+    const wantsCats = ['Entertainment', 'Festivals', 'Travel'];
+    const needsSpent = filteredExpenses.filter(exp => needsCats.includes(exp.category)).reduce((sum, exp) => sum + exp.amount, 0);
+    const wantsSpent = filteredExpenses.filter(exp => wantsCats.includes(exp.category)).reduce((sum, exp) => sum + exp.amount, 0);
+    const savingsSpent = goals.reduce((sum, goal) => sum + goal.saved, 0) + filteredSavings.reduce((sum, s) => sum + s.amount, 0);
+    const festivalSpent = filteredExpenses.filter(exp => exp.category === 'Festivals').reduce((sum, exp) => sum + exp.amount, 0);
+    const totalIncome = incomes.reduce((sum, inc) => sum + (inc.amount / (inc.frequency === 'monthly' ? 1 : 12)), 0);
+    const recommendations = [];
+    console.log('Total Income:', totalIncome, 'Needs Spent:', needsSpent, 'Wants Spent:', wantsSpent, 'Savings Spent:', savingsSpent);
+    if (totalIncome === 0) {
+        recommendations.push('Add some income data to get personalized financial insights!');
+    } else {
+        if (needsSpent > budget.needs) {
+            const overage = needsSpent - budget.needs;
+            const topNeed = needsCats.reduce((max, cat) => {
+                const spent = filteredExpenses.filter(exp => exp.category === cat).reduce((sum, exp) => sum + exp.amount, 0);
+                return spent > max.amount ? { category: cat, amount: spent } : max;
+            }, { category: '', amount: 0 });
+            recommendations.push(`You're ₹${overage.toFixed(2)} over budget on needs, with ${topNeed.category} (₹${topNeed.amount.toFixed(2)}) being the highest. Negotiate your ${topNeed.category.toLowerCase()} or switch to a cheaper provider to save.`);
+        } else if (needsSpent < budget.needs * 0.8) {
+            recommendations.push(`Great job keeping needs under ₹${budget.needs.toFixed(2)}! Consider allocating extra to savings or debt repayment.`);
+        }
+        if (wantsSpent > budget.wants) {
+            const overage = wantsSpent - budget.wants;
+            const topWant = wantsCats.reduce((max, cat) => {
+                const spent = filteredExpenses.filter(exp => exp.category === cat).reduce((sum, exp) => sum + exp.amount, 0);
+                return spent > max.amount ? { category: cat, amount: spent } : max;
+            }, { category: '', amount: 0 });
+            recommendations.push(`You're ₹${overage.toFixed(2)} over budget on wants, with ${topWant.category} (₹${topWant.amount.toFixed(2)}) leading. Cut back on one ${topWant.category.toLowerCase()} expense, like a Zomato order, to save ₹500-1000/month.`);
+        } else {
+            recommendations.push(`Your wants are within ₹${budget.wants.toFixed(2)}! Keep enjoying chai runs and OTT subscriptions responsibly.`);
+        }
+        if (savingsSpent < budget.savings) {
+            const gap = budget.savings - savingsSpent;
+            recommendations.push(`You're ₹${gap.toFixed(2)} short on savings/debt repayment. Start a ₹500/month SIP on Groww or skip one coffee run weekly to boost savings.`);
+        } else {
+            recommendations.push(`Killing it with savings at ₹${savingsSpent.toFixed(2)}! Explore mutual funds on Zerodha or Cred for long-term growth.`);
+        }
+        if (festivalSpent > totalIncome * 0.1) {
+            recommendations.push(`Festival spending (₹${festivalSpent.toFixed(2)}) is over 10% of your income. Set a ₹${(totalIncome * 0.05).toFixed(2)} budget for Diwali or Holi to stay on track.`);
+        }
+    }
+    console.log('Recommendations generated:', recommendations);
+    const recDiv = document.getElementById('recommendations');
+    if (recDiv) {
+        recDiv.innerHTML = `
+            <h3 class="text-lg font-semibold mb-3">AI-Driven Financial Insights</h3>
+            ${recommendations.length ? recommendations.map(r => `<p class="recommendation">${r}</p>`).join('') : '<p>Add more data to get tailored financial tips!</p>'}
+        `;
+    } else {
+        console.warn('recommendations div not found');
+    }
+  }
+
+  // Export to Excel
+  function exportToExcel() {
+    console.log('exportToExcel called');
+    const selectedMonth = document.getElementById('budgetMonth')?.value || '1';
+    const selectedYear = document.getElementById('budgetYear')?.value || new Date().getFullYear();
+    const filteredIncomes = incomes.filter(inc => {
+        const date = new Date(inc.date);
+        return date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear);
+    });
+    const filteredExpenses = expenses.filter(exp => {
+        const date = new Date(exp.date);
+        return date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear);
+    });
+    const filteredSavings = savings.filter(sav => {
+        const date = new Date(sav.date);
+        return date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear);
+    });
+    const data = [
+        ['RupeeMentor Pro Budget Report'],
+        ['Month', new Date(selectedYear, selectedMonth - 1).toLocaleString('default', { month: 'long' })],
+        ['Year', selectedYear],
+        [],
+        ['Incomes'],
+        ['Source', 'Amount (₹)', 'Frequency', 'Date'],
+        ...filteredIncomes.map(inc => [inc.source, inc.amount.toFixed(2), inc.frequency, new Date(inc.date).toLocaleDateString()]),
+        [],
+        ['Expenses'],
+        ['Description', 'Amount (₹)', 'Category', 'Date'],
+        ...filteredExpenses.map(exp => [exp.description, exp.amount.toFixed(2), exp.category, new Date(exp.date).toLocaleDateString()]),
+        [],
+        ['Savings/Investments'],
+        ['Description', 'Amount (₹)', 'Category', 'Date'],
+        ...filteredSavings.map(sav => [sav.description, sav.amount.toFixed(2), sav.category, new Date(sav.date).toLocaleDateString()]),
+        [],
+        ['Goals'],
+        ['Description', 'Target Amount (₹)', 'Saved (₹)', 'Type', 'Deadline', 'Monthly Target (₹)'],
+        ...goals.map(goal => [goal.description, goal.amount.toFixed(2), goal.saved.toFixed(2), goal.type, new Date(goal.date).toLocaleDateString(), goal.monthlyTarget.toFixed(2)])
+    ];
+    if (window.XLSX) {
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Budget');
+        XLSX.writeFile(wb, `RupeeMentor_Budget_${selectedYear}_${selectedMonth}.xlsx`);
+        showSuccess('dashboard', 'Budget exported to Excel successfully!');
+    } else {
+        console.warn('XLSX not available');
+        showError('dashboard', 'Excel export not available.');
+    }
+  }
+
+  // Export to PDF
+  function exportToPDF() {
+    console.log('exportToPDF called');
+    if (!window.jspdf) {
+        console.warn('jsPDF not available');
+        showError('dashboard', 'PDF export not available.');
+        return;
+    }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const selectedMonth = document.getElementById('budgetMonth')?.value || '1';
+    const selectedYear = document.getElementById('budgetYear')?.value || new Date().getFullYear();
+    const filteredIncomes = incomes.filter(inc => {
+        const date = new Date(inc.date);
+        return date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear);
+    });
+    const filteredExpenses = expenses.filter(exp => {
+        const date = new Date(exp.date);
+        return date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear);
+    });
+    const filteredSavings = savings.filter(sav => {
+        const date = new Date(sav.date);
+        return date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear);
+    });
+    doc.setFontSize(16);
+    doc.text('RupeeMentor Pro Budget Report', 20, 20);
+    doc.setFontSize(12);
+    doc.text(`Month: ${new Date(selectedYear, selectedMonth - 1).toLocaleString('default', { month: 'long' })} ${selectedYear}`, 20, 30);
+    let y = 40;
+    doc.text('Incomes', 20, y);
+    y += 10;
+    filteredIncomes.forEach(inc => {
+        if (y > 270) {
+            doc.addPage();
+            y = 20;
+        }
+        doc.text(`${inc.source}: ₹${inc.amount.toFixed(2)} (${inc.frequency})`, 20, y);
+        y += 10;
+    });
+    y += 10;
+    doc.text('Expenses', 20, y);
+    y += 10;
+    filteredExpenses.forEach(exp => {
+        if (y > 270) {
+            doc.addPage();
+            y = 20;
+        }
+        doc.text(`${exp.description} [${exp.category}]: ₹${exp.amount.toFixed(2)}`, 20, y);
+        y += 10;
+    });
+    y += 10;
+    doc.text('Savings/Investments', 20, y);
+    y += 10;
+    filteredSavings.forEach(sav => {
+        if (y > 270) {
+            doc.addPage();
+            y = 20;
+        }
+        doc.text(`${sav.description} [${sav.category}]: ₹${sav.amount.toFixed(2)}`, 20, y);
+        y += 10;
+    });
+    y += 10;
+    doc.text('Goals', 20, y);
+    y += 10;
+    goals.forEach(goal => {
+        if (y > 270) {
+            doc.addPage();
+            y = 20;
+        }
+        doc.text(`${goal.description}: ₹${goal.amount.toFixed(2)} (Saved: ₹${goal.saved.toFixed(2)}) by ${new Date(goal.date).toLocaleDateString()}`, 20, y);
+        y += 10;
+    });
+    doc.save(`RupeeMentor_Budget_${selectedYear}_${selectedMonth}.pdf`);
+    showSuccess('dashboard', 'Budget exported to PDF successfully!');
+  }
+
+  // Reset budget data
+  function resetBudgetData() {
+    console.log('resetBudgetData called');
+    if (confirm('Are you sure you want to reset all budget data for the selected month? This cannot be undone.')) {
+        const selectedMonth = document.getElementById('budgetMonth')?.value || '1';
+        const selectedYear = document.getElementById('budgetYear')?.value || new Date().getFullYear();
+        incomes = incomes.filter(inc => {
+            const date = new Date(inc.date);
+            return !(date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear));
+        });
+        expenses = expenses.filter(exp => {
+            const date = new Date(exp.date);
+            return !(date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear));
+        });
+        savings = savings.filter(sav => {
+            const date = new Date(sav.date);
+            return !(date.getMonth() + 1 === parseInt(selectedMonth) && date.getFullYear() === parseInt(selectedYear));
+        });
+        // Do not reset goals, as they are long-term
+        if (currentUser) {
+            fetchWithTimeout(`${BASE_URL}/api/budget/reset`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    userId: localStorage.getItem('userId'),
+                    month: selectedMonth,
+                    year: selectedYear
+                })
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    saveData();
+                    updateDashboard();
+                    showSuccess('dashboard', 'Budget data reset successfully!');
+                })
+                .catch(error => {
+                    console.error('Error resetting budget:', error);
+                    showError('dashboard', 'Failed to reset budget data.');
+                });
+        } else {
+            saveData();
+            updateDashboard();
+            showSuccess('dashboard', 'Budget data reset successfully!');
+        }
+    }
+  }
+
+  function populateMonthAndYearDropdowns() {
+    const monthSelect = document.getElementById('budgetMonth');
+    const yearSelect = document.getElementById('budgetYear');
+    if (monthSelect) monthSelect.addEventListener('change', debounce(loadBudgetData, 300));
+    if (yearSelect) yearSelect.addEventListener('change', debounce(loadBudgetData, 300));
+    if (!monthSelect || !yearSelect) return;
+    // Populate months (1–12)
+    for (let m = 1; m <= 12; m++) {
+      const opt = document.createElement('option');
+      opt.value = m;
+      opt.textContent = new Date(0, m - 1).toLocaleString('default', { month: 'long' });
+      monthSelect.appendChild(opt);
+    }
+    // Populate years (current year - 5 to +5)
+    const currentYear = new Date().getFullYear();
+    for (let y = currentYear - 5; y <= currentYear + 5; y++) {
+      const opt = document.createElement('option');
+      opt.value = y;
+      opt.textContent = y;
+      yearSelect.appendChild(opt);
+    }
+    // Set current values as default
+    monthSelect.value = new Date().getMonth() + 1;
+    yearSelect.value = currentYear;
+  }
+
+  // Auth UI toggle
+  function updateAuthUI() {
+    const isLoggedIn = !!localStorage.getItem('token');
+    const username = localStorage.getItem('username');
+    const authLink = document.getElementById('authLink');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const userDisplay = document.getElementById('userDisplay');
+    // Update welcome message
+    if (userDisplay) {
+      userDisplay.innerHTML = isLoggedIn
+        ? `Welcome, ${username} | `
+        : `Welcome, Guest | <button id="authLink" class="underline hover:text-blue-200">Login/Sign Up</button>`;
+    }
+    // Toggle login/logout buttons
+    if (authLink) authLink.style.display = isLoggedIn ? 'none' : 'inline';
+    if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'inline' : 'none';
+    // Rebind login button if needed
+    if (!isLoggedIn) {
+      bindAuthLink();
+    }
+  }
+
+  function bindAuthLink() {
+    const authLink = document.getElementById('authLink');
+    if (authLink) {
+      authLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal('loginModal');
+      });
+    }
+  }
+
+  // Initialize function (called directly now)
+  function initialize() {
+    console.log('Initializing budget planner');
+    // Verify button elements and attach event listeners
+    const buttons = [
+        { id: 'addIncomeBtn', handler: checkAuthBeforeAction(addIncome), action: 'click' },
+        { id: 'addExpenseBtn', handler: checkAuthBeforeAction(addExpense), action: 'click' },
+        { id: 'addSavingsBtn', handler: checkAuthBeforeAction(addSavings), action: 'click' },
+        { id: 'addGoalBtn', handler: () => { console.log('addGoalBtn clicked'); openModal('goalModal'); }, action: 'click' },
+        { id: 'expenseFilter', handler: updateCharts, action: 'change' },
+        { id: 'planBudgetBtn', handler: () => {
+            console.log('planBudgetBtn clicked');
+            const target = document.getElementById('planBudget');
+            if (target) target.scrollIntoView({ behavior: 'smooth' });
+        }, action: 'click' },
+        { id: 'exportExcelBtn', handler: exportToExcel, action: 'click' },
+        { id: 'exportPdfBtn', handler: exportToPDF, action: 'click' },
+        { id: 'resetDataBtn', handler: resetBudgetData, action: 'click' }
+    ];
+    buttons.forEach(({ id, handler, action }) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.removeEventListener(action, handler); // Prevent duplicate listeners
+            element.addEventListener(action, handler);
+            console.log(`Event listener attached to ${id} for ${action}`);
+        } else {
+            console.warn(`${id} not found in DOM`);
+        }
+    });
+    // Tab navigation
+    ['incomeTab', 'expenseTab', 'savingsTab'].forEach(tabId => {
+        const tab = document.getElementById(tabId);
+        if (tab) {
+            tab.removeEventListener('click', () => openTab(tabId.replace('Tab', '')));
+            tab.addEventListener('click', () => {
+                console.log(`${tabId} clicked`);
+                openTab(tabId.replace('Tab', ''));
+            });
+        } else {
+            console.warn(`${tabId} not found`);
+        }
+    });
+    // Form submissions and inputs
+    const forms = [
+        { id: 'goalForm', handler: (e) => {
+            e.preventDefault();
+            console.log('goalForm submitted');
+            addGoal();
+        }, action: 'submit' },
+        { id: 'expenseDescription', handler: suggestCategory, action: 'input' },
+        { id: 'savingsDescription', handler: suggestCategory_sav, action: 'input' }
+    ];
+    forms.forEach(({ id, handler, action }) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.removeEventListener(action, handler);
+            element.addEventListener(action, handler);
+            console.log(`Event listener attached to ${id} for ${action}`);
+        } else {
+            console.warn(`${id} not found in DOM`);
+        }
+    });
+    // Auth form handlers (non-duplicate)
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        console.log('loginForm submitted');
+        const formData = new FormData(e.target);
+        const credentials = {
+          username: formData.get('username').trim(),
+          password: formData.get('password')
+        };
+        try {
+          const response = await fetchWithTimeout(`${BASE_URL}/api/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(credentials)
+          });
+          if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.message || `HTTP ${response.status}`);
+          }
+          const data = await response.json();
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('userId', data.userId);
+          localStorage.setItem('username', data.username);
+          currentUser = data.username;
+          const userDisplay = document.getElementById('userDisplay');
+          if (userDisplay) userDisplay.innerHTML = `Welcome, ${data.username}`;
+          closeModal('loginModal');
+          updateAuthUI();
+          mergeGuestData();
+          populateMonthAndYearDropdowns();
+          loadBudgetData();
+          updateCategorySuggestions();
+          updateDashboard();
+        } catch (error) {
+          console.error('Login error:', error.message, error.stack);
+          showError('login', error.message.includes('fetch') ? 'Failed to connect to server.' : error.message || 'Invalid username or password.');
+        }
+      });
+    }
+    const signupForm = document.getElementById('signupForm');
+    if (signupForm) {
+      signupForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        console.log('signupForm submitted');
+        const formData = new FormData(e.target);
+        const user = {
+          username: formData.get('username').trim(),
+          email: formData.get('email').trim(),
+          password: formData.get('password')
+        };
+        if (!user.username || !user.email || !user.password) {
+          showError('signup', 'Please fill in all fields.');
+          return;
+        }
+        if (!/^[a-zA-Z0-9_]{3,20}$/.test(user.username)) {
+          showError('signup', 'Username must be 3-20 characters (letters, numbers, underscores).');
+          return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email)) {
+          showError('signup', 'Please enter a valid email address.');
+          return;
+        }
+        if (user.password.length < 6) {
+          showError('signup', 'Password must be at least 6 characters.');
+          return;
+        }
+        const maxRetries = 2;
+        let attempt = 0;
+        while (attempt < maxRetries) {
+          try {
+            const response = await fetchWithTimeout(`${BASE_URL}/api/signup`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(user)
+            });
+            if (!response.ok) {
+              const data = await response.json();
+              switch (response.status) {
+                case 400: throw new Error(data.message || 'Invalid input data.');
+                case 409: throw new Error(data.message || 'Username or email already exists.');
+                case 500: throw new Error(data.message || 'Server error.');
+                default: throw new Error(data.message || 'Signup failed.');
+              }
+            }
+            const data = await response.json();
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('userId', data.userId);
+            localStorage.setItem('username', data.username);
+            currentUser = data.username;
+            const userDisplay = document.getElementById('userDisplay');
+            if (userDisplay) userDisplay.innerHTML = `Welcome, ${data.username}`;
+            closeModal('signupModal');
+            updateAuthUI();
+            showSuccess('signup', 'Signed up successfully!');
+            mergeGuestData();
+            loadBudgetData();
+            updateCategorySuggestions();
+            return;
+          } catch (error) {
+            attempt++;
+            console.error(`Signup attempt ${attempt}/${maxRetries} failed:`, error.message, error.stack);
+            if (attempt >= maxRetries) {
+              showError('signup', error.message.includes('fetch') ? 'Unable to connect to backend server.' : error.message || 'Signup failed.');
+              const guestKey = `guest_${new Date().getFullYear()}_${new Date().getMonth() + 1}`;
+              localStorage.setItem(guestKey, JSON.stringify({ ...getLocalStorageArray(guestKey), user }));
+              return;
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        }
+      });
+    }
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', () => {
+        console.log('logoutBtn clicked');
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('username');
+        currentUser = null;
+        incomes = [];
+        expenses = [];
+        savings = [];
+        goals = [];
+        const userDisplay = document.getElementById('userDisplay');
+        if (userDisplay) {
+          userDisplay.innerHTML = `Welcome, Guest | <button id="authLink" class="underline hover:text-blue-200">Login/Sign Up</button>`;
+        }
+        updateAuthUI();
+        updateDashboard();
+      });
+    }
+    updateAuthUI();
+    loadBudgetData();
+    updateCategorySuggestions();
+    openTab('income');
+  }
+
+  // Call initialize directly (no nested event listener)
+  initialize();
+});
+</script>
+</body>
+</html>
